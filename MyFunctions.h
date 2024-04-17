@@ -9,6 +9,7 @@
 static const int kScreenWidth = 1920;//ウィンドウの横幅
 static const int kScreenHeight = 1080;//ウィンドウの高さ
 
+static const int kRowHeight = 24;
 static const int kColumnWidth = 60;//Vector3を画面に描画する時に使う定数
 
 /*---構造体---*/
@@ -26,6 +27,11 @@ struct Matrix2x2
 struct Matrix3x3
 {
 	float m[3][3];
+};
+
+struct Matrix4x4
+{
+	float m[4][4];
 };
 
 /*---関数---*/
@@ -54,3 +60,11 @@ float Dot(Vector3 a, Vector3 b);//3次元ベクトルの内積を返す関数
 float Length(Vector3 a);//3次元ベクトルの長さをfloat型で返す関数
 Vector3 Normalize(Vector3 a);//正規化した3次元ベクトルを返す関数
 void VectorScreenPrintf(int x, int y, const Vector3& a, const char* label);
+
+Matrix4x4 Add(const Matrix4x4& a, const Matrix4x4& b);
+Matrix4x4 Subtract(const Matrix4x4& a, const Matrix4x4& b);
+Matrix4x4 Multiply(const float& scalar, const Matrix4x4& a);
+Matrix4x4 Multiply(const Matrix4x4& a, const Matrix4x4& b);
+Matrix4x4 Inverse(const Matrix4x4& a);
+Matrix4x4 MakeIdentity4x4();
+void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix, const char* label);
