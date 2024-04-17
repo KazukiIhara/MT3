@@ -66,5 +66,6 @@ Matrix4x4 Subtract(const Matrix4x4& a, const Matrix4x4& b);
 Matrix4x4 Multiply(const float& scalar, const Matrix4x4& a);
 Matrix4x4 Multiply(const Matrix4x4& a, const Matrix4x4& b);
 Matrix4x4 Inverse(const Matrix4x4& a);
+Matrix4x4 Transpose(const Matrix4x4& a);
 Matrix4x4 MakeIdentity4x4();
 void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix, const char* label);
