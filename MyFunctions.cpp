@@ -175,18 +175,46 @@ Matrix4x4 Multiply(const Matrix4x4& a, const Matrix4x4& b)
 
 Matrix4x4 Inverse(const Matrix4x4& a)
 {
-	return
-	{
+	Matrix4x4 A = a;
+	Matrix4x4 B = MakeIdentity4x4();
 
-	};
+	int i, j, k;
+	for (i = 0; i < 4; ++i) {
+		float scale = 1.0f / A.m[i][i];
+		for (j = 0; j < 4; ++j) {
+			A.m[i][j] *= scale;
+			B.m[i][j] *= scale;
+		}
+		for (k = 0; k < 4; ++k) {
+			if (k != i) {
+				float factor = A.m[k][i];
+				for (j = 0; j < 4; ++j) {
+					A.m[k][j] -= factor * A.m[i][j];
+					B.m[k][j] -= factor * B.m[i][j];
+				}
+			}
+		}
+	}
+
+	return B;
+}
+
+Matrix4x4 Transpose(const Matrix4x4& a) {
+	Matrix4x4 result;
+	for (int i = 0; i < 4; ++i) {
+		for (int j = 0; j < 4; ++j) {
+			result.m[i][j] = a.m[j][i]; 
+		}
+	}
+	return result;
 }
 
 Matrix4x4 MakeIdentity4x4()
 {
 	Matrix4x4 identity{};
 	identity.m[0][0] = 1.0f; identity.m[0][1] = 0.0f; identity.m[0][2] = 0.0f; identity.m[0][3] = 0.0f;
-	identity.m[1][0] = 0.0f; identity.m[1][1] = 0.0f; identity.m[1][2] = 0.0f; identity.m[1][3] = 0.0f;
-	identity.m[2][0] = 0.0f; identity.m[2][1] = 1.0f; identity.m[2][2] = 1.0f; identity.m[2][3] = 0.0f;
+	identity.m[1][0] = 0.0f; identity.m[1][1] = 1.0f; identity.m[1][2] = 0.0f; identity.m[1][3] = 0.0f;
+	identity.m[2][0] = 0.0f; identity.m[2][1] = 0.0f; identity.m[2][2] = 1.0f; identity.m[2][3] = 0.0f;
 	identity.m[3][0] = 0.0f; identity.m[3][1] = 0.0f; identity.m[3][2] = 0.0f; identity.m[3][3] = 1.0f;
 	return identity;
 }

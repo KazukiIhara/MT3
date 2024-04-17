@@ -31,6 +31,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	Matrix4x4 resultAdd = Add(m1, m2);
 	Matrix4x4 resultSubtract = Subtract(m1, m2);
 	Matrix4x4 resultMultiply = Multiply(m1, m2);
+	Matrix4x4 inverseM1 = Inverse(m1);
+	Matrix4x4 inverseM2 = Inverse(m2);
+	Matrix4x4 transposeM1 = Transpose(m1);
+	Matrix4x4 transposeM2 = Transpose(m2);
+	Matrix4x4 identity = MakeIdentity4x4();
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0)
@@ -58,6 +63,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		MatrixScreenPrintf(0, 0, resultAdd, "Add");
 		MatrixScreenPrintf(0, kRowHeight * 5, resultSubtract, "Subtract");
 		MatrixScreenPrintf(0, kRowHeight * 5 * 2, resultMultiply, "Multiply");
+		MatrixScreenPrintf(0, kRowHeight * 5 * 3, inverseM1, "inverseM1");
+		MatrixScreenPrintf(0, kRowHeight * 5 * 4, inverseM2, "inverseM2");
+		MatrixScreenPrintf(kColumnWidth * 5, 0, transposeM1, "transposeM1");
+		MatrixScreenPrintf(kColumnWidth * 5, kRowHeight * 5, transposeM2, "transposeM2");
+		MatrixScreenPrintf(kColumnWidth * 5, kRowHeight * 5 * 2, identity, "identity");
 
 		///
 		/// ↑描画処理ここまで
