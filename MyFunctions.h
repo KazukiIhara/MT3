@@ -2,7 +2,8 @@
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Vector4.h"
-#include "math.h"
+#include <math.h>
+#include <cmath>
 #define _USE_MATH_DIFINES
 
 /*---定数---*/
@@ -73,3 +74,7 @@ void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix, const char* label
 Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
 Matrix4x4 MakeScaleMatrix(const Vector3& scale);
 Vector3 Transform(const  Vector3& vector, const  Matrix4x4& matrix);
+
+Matrix4x4 MakeRotateXMatrix(float radian);
+Matrix4x4 MakeRotateYMatrix(float radian);
+Matrix4x4 MakeRotateZMatrix(float radian);

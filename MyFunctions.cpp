@@ -273,3 +273,36 @@ Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix)
 	return result;
 
 }
+
+Matrix4x4 MakeRotateXMatrix(float radian)
+{
+	Matrix4x4 rotateX{
+		1.0f,0.0f,0.0f,0.0f,
+		0.0f,std::cos(radian),std::sin(radian),0.0f,
+		0.0f,-std::sin(radian),std::cos(radian),0.0f,
+		0.0f,0.0f,0.0f,1.0f,
+	};
+	return rotateX;
+}
+
+Matrix4x4 MakeRotateYMatrix(float radian)
+{
+	Matrix4x4 rotateY{
+		std::cos(radian),0.0f,-std::sin(radian),0.0f,
+		0.0f,1.0f,0.0f,0.0f,
+		std::sin(radian),0.0f,std::cos(radian),0.0f,
+		0.0f,0.0f,0.0f,1.0f,
+	};
+	return rotateY;
+}
+
+Matrix4x4 MakeRotateZMatrix(float radian)
+{
+	Matrix4x4 rotateZ{
+		std::cos(radian),std::sin(radian),0.0f,0.0f,
+		-std::sin(radian),std::cos(radian),0.0f,0.0f,
+		0.0f,0.0f,1.0f,0.0f,
+		0.0f,0.0f,0.0f,1.0f,
+	};
+	return rotateZ;
+}
