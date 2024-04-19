@@ -336,3 +336,39 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Ve
 	Matrix4x4 result = Multiply(MakeScaleMatrix(scale), Multiply(MakeRotateXYZMatrix(rotate), MakeTranslateMatrix(translate)));
 	return result;
 }
+
+Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRaito, float nearClip, float farClip)
+{
+	Matrix4x4 result =
+	{
+		(1.0f / aspectRaito) * (1.0f / std::tan(fovY / 2.0f)),0.0f,0.0f,0.0f,
+		0.0f, 1.0f / std::tan(fovY / 2.0f), 0.0f, 0.0f,
+		0.0f, 0.0f, farClip / (farClip - nearClip),1.0f,
+		0.0f, 0.0f, (-nearClip * farClip) / (farClip - nearClip),0.0f,
+	};
+	return result;
+}
+
+Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip)
+{
+	Matrix4x4 result =
+	{
+		2.0f / (right - left), 0.0f, 0.0f, 0.0f,
+		0.0f, 2.0f / (top - bottom), 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f / (farClip - nearClip), 0.0f,
+		(left + right) / (left - right),(top + bottom) / (bottom - top), nearClip / (nearClip - farClip),1.0f,
+	};
+	return result;
+}
+
+Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth)
+{
+	Matrix4x4 result =
+	{
+		width / 2.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, -height / 2.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, maxDepth - minDepth, 0.0f,
+		left + width / 2.0f, top + height / 2.0f, minDepth, 1.0f,
+	};
+	return result;
+}
