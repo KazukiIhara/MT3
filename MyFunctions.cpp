@@ -306,3 +306,33 @@ Matrix4x4 MakeRotateZMatrix(float radian)
 	};
 	return rotateZ;
 }
+
+Matrix4x4 MakeRotateXYZMatrix(Vector3 rotate)
+{
+	Matrix4x4 rotateX{
+		1.0f,0.0f,0.0f,0.0f,
+		0.0f,std::cos(rotate.x),std::sin(rotate.x),0.0f,
+		0.0f,-std::sin(rotate.x),std::cos(rotate.x),0.0f,
+		0.0f,0.0f,0.0f,1.0f,
+	};
+	Matrix4x4 rotateY{
+		std::cos(rotate.y),0.0f,-std::sin(rotate.y),0.0f,
+		0.0f,1.0f,0.0f,0.0f,
+		std::sin(rotate.y),0.0f,std::cos(rotate.y),0.0f,
+		0.0f,0.0f,0.0f,1.0f,
+	};
+	Matrix4x4 rotateZ{
+		std::cos(rotate.z),std::sin(rotate.z),0.0f,0.0f,
+		-std::sin(rotate.z),std::cos(rotate.z),0.0f,0.0f,
+		0.0f,0.0f,1.0f,0.0f,
+		0.0f,0.0f,0.0f,1.0f,
+	};
+	Matrix4x4 result = Multiply(rotateX, Multiply(rotateY, rotateZ));
+	return result;
+}
+
+Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate)
+{
+	Matrix4x4 result = Multiply(MakeScaleMatrix(scale), Multiply(MakeRotateXYZMatrix(rotate), MakeTranslateMatrix(translate)));
+	return result;
+}
