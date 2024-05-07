@@ -19,13 +19,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	VectorScreenPrintf(0, 0, cross, "Cross");
 
 	Vector3 rotate{ 0.0f,0.0f,0.0f };
-	Vector3 translate{ 0.0f,0.0f,1.0f };
+	Vector3 translate{ 0.0f,0.0f,-10.0f };
 	Vector3 kLocalVertex[3];
 	kLocalVertex[0] = { -1.0f,1.0f,0.0f };
 	kLocalVertex[1] = { 0.0f,-1.0f,0.0f };
 	kLocalVertex[2] = { 1.0f,1.0f,0.0f };
 
-	Vector3 cameraPosition{ 0.0f,0.0f,10.0f };
+	Vector3 cameraPosition{ 0.0f,0.0f,0.0f };
 
 
 	// ウィンドウの×ボタンが押されるまでループ
