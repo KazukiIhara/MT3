@@ -17,7 +17,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	Vector3 v2{ 2.8f, 0.4f, -1.3f };
 	Vector3 cross = Cross(v1, v2);
 	VectorScreenPrintf(0, 0, cross, "Cross");
-
 	Vector3 rotate{ 0.0f,0.0f,0.0f };
 	Vector3 translate{ 0.0f,0.0f,-10.0f };
 	Vector3 kLocalVertex[3];
