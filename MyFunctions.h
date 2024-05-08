@@ -4,6 +4,7 @@
 #include "Vector4.h"
 #include <math.h>
 #include <cmath>
+#include <numbers>
 #define _USE_MATH_DIFINES
 
 /*---定数---*/
