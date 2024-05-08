@@ -74,8 +74,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		Novice::SetWindowMode(windowMode);
 
 		//Imgui
-		ImGui::Begin("");
+		ImGui::Begin("Window");
+		ImGui::DragFloat3("cameraTranslate", &cameraTranslate.x, 0.01f);
+		ImGui::DragFloat3("cameraRotate", &cameraRotate.x, 0.01f);
 
+		ImGui::End();
 
 
 		///
