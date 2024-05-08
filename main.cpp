@@ -39,6 +39,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		ImGui::DragFloat3("cameraRotate", &cameraRotate.x, 0.01f);
 		ImGui::DragFloat3("sphereTranslate", &sphere.center.x, 0.01f);
 		ImGui::DragFloat3("sphereRotate", &sphere.rotate.x, 0.01f);
+		ImGui::DragFloat("sphereRadius", &sphere.radius, 0.01f);
 		ImGui::End();
 
 		///
