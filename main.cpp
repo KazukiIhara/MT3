@@ -4,50 +4,11 @@
 
 
 const char kWindowTitle[] = "LE2B_02_イハラ_カズキ_MT3";
-void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix)
+
+struct Sphere
 {
-	const float kGridHalfWidth = 2.0f;
-	const uint32_t kSubdivision = 10;
-	const float kGridEvery = (kGridHalfWidth * 2.0f) / float(kSubdivision);
-	Vector3 kLocalGrid{ 0.0f,0.0f,0.0f };
 
-	//奥から手前への線を隅々にひいていく
-	for (uint32_t xIndex = 0; xIndex <= kSubdivision; ++xIndex)
-	{
-		Vector3 startPos = { -kGridHalfWidth + xIndex * kGridEvery,0.0f,-kGridHalfWidth };
-		Vector3 endPos = { -kGridHalfWidth + xIndex * kGridEvery,0.0f,kGridHalfWidth };
-
-		Matrix4x4 sWorldMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, { 0.0f, 0.0f, 0.0f }, startPos);
-		Matrix4x4 sWorldViewProjectionMatrix = Multiply(sWorldMatrix, viewProjectionMatrix);
-		Vector3 ndcStart = Transform(kLocalGrid, sWorldViewProjectionMatrix);
-		Vector3 screenStart = Transform(ndcStart, viewportMatrix);
-
-		Matrix4x4 eWorldMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, { 0.0f, 0.0f, 0.0f }, endPos);
-		Matrix4x4 eWorldViewProjectionMatrix = Multiply(eWorldMatrix, viewProjectionMatrix);
-		Vector3 ndcEnd = Transform(kLocalGrid, eWorldViewProjectionMatrix);
-		Vector3 screenEnd = Transform(ndcEnd, viewportMatrix);
-
-		Novice::DrawLine(int(screenStart.x), int(screenStart.y), int(screenEnd.x), int(screenEnd.y), 0xaaaaaaff);
-	}
-	for (uint32_t xIndex = 0; xIndex <= kSubdivision; ++xIndex)
-	{
-		Vector3 startPos = { -kGridHalfWidth,0.0f,-kGridHalfWidth + xIndex * kGridEvery };
-		Vector3 endPos = { kGridHalfWidth,0.0f,-kGridHalfWidth + xIndex * kGridEvery };
-
-		Matrix4x4 sWorldMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, { 0.0f, 0.0f, 0.0f }, startPos);
-		Matrix4x4 sWorldViewProjectionMatrix = Multiply(sWorldMatrix, viewProjectionMatrix);
-		Vector3 ndcStart = Transform(kLocalGrid, sWorldViewProjectionMatrix);
-		Vector3 screenStart = Transform(ndcStart, viewportMatrix);
-
-		Matrix4x4 eWorldMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, { 0.0f, 0.0f, 0.0f }, endPos);
-		Matrix4x4 eWorldViewProjectionMatrix = Multiply(eWorldMatrix, viewProjectionMatrix);
-		Vector3 ndcEnd = Transform(kLocalGrid, eWorldViewProjectionMatrix);
-		Vector3 screenEnd = Transform(ndcEnd, viewportMatrix);
-
-		Novice::DrawLine(int(screenStart.x), int(screenStart.y), int(screenEnd.x), int(screenEnd.y), 0xaaaaaaff);
-	}
-
-}
+};
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
