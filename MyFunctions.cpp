@@ -435,7 +435,7 @@ void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, con
 	const float kLonEvery = 2.0f * std::numbers::pi_v<float> / float(kSubdivision); // 経度分割1つ分の角度
 	const float kLatEvery = std::numbers::pi_v<float> / float(kSubdivision); // 緯度分割1つ分の角度
 	Matrix4x4 worldMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, sphere.rotate, sphere.center);
-
+	Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, viewProjectionMatrix);
 
 	// 緯度の方向に分割 -π/2 ~ π/2
 	for (uint32_t latIndex = 0; latIndex < kSubdivision; latIndex++)
@@ -452,7 +452,6 @@ void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, con
 			b = { std::cosf(lat + kLatEvery) * std::cosf(lon) * sphere.radius,std::sinf(lat + kLatEvery) * sphere.radius,std::cosf(lat + kLatEvery) * std::sinf(lon) * sphere.radius };
 			c = { std::cos(lat) * std::cos(lon + kLonEvery) * sphere.radius,std::sin(lat) * sphere.radius,std::cos(lat) * std::sin(lon + kLonEvery) * sphere.radius };
 			// a, b, c を screen 座標系に変換
-			Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, viewProjectionMatrix);
 
 			Vector3 ndcA = Transform(a, worldViewProjectionMatrix);
 			Vector3 screenA = Transform(ndcA, viewportMatrix);
