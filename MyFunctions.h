@@ -36,6 +36,13 @@ struct Matrix4x4
 	float m[4][4];
 };
 
+struct Sphere
+{
+	Vector3 center;//中心点
+	Vector3 rotate;//回転
+	float radius;//半径
+};
+
 /*---関数---*/
 
 int Add(const int& a, const int& b);
@@ -90,3 +97,5 @@ Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, f
 Vector3 Cross(const Vector3& v1, const Vector3& v2);
 
 void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix);
+
+void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
