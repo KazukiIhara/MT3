@@ -17,10 +17,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	Vector3 cameraTranslate{ 0.0f,1.9f,-6.49f };
 	Vector3 cameraRotate{ 0.26f,0.0f,0.0f };
 
-	Sphere sphere{};
-	sphere.center = { 0.0f,0.0f,0.0f };
-	sphere.rotate = { 0.0f,0.0f,0.0f };
-	sphere.radius = 1.0f;
+	Segment segment{ {-2.0f,-1.0f,0.0f},{3.0f,2.0f,2.0f} };
+	Vector3 point{ -1.5f,0.6f,0.6f };
+
+	Vector3 project = Project(Subtract(point, segment.origin), segment.diff);
+
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0)
@@ -37,9 +38,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		ImGui::Begin("Window");
 		ImGui::DragFloat3("cameraTranslate", &cameraTranslate.x, 0.01f);
 		ImGui::DragFloat3("cameraRotate", &cameraRotate.x, 0.01f);
-		ImGui::DragFloat3("sphereTranslate", &sphere.center.x, 0.01f);
-		ImGui::DragFloat3("sphereRotate", &sphere.rotate.x, 0.01f);
-		ImGui::DragFloat("sphereRadius", &sphere.radius, 0.01f);
+		ImGui::InputFloat3("Project", &project.x, "%.3f", ImGuiInputTextFlags_ReadOnly);
 		ImGui::End();
 
 		///
@@ -58,7 +57,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		///
 		/// ↓描画処理ここから
 		///
-		DrawSphere(sphere, viewProjectionMatrix, viewportMatrix, 0x000000ff);
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
 
 		///

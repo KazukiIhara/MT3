@@ -386,8 +386,8 @@ Vector3 Cross(const Vector3& v1, const Vector3& v2)
 
 void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix)
 {
-	const float kGridHalfWidth = 4.0f;
-	const uint32_t kSubdivision = 20;
+	const float kGridHalfWidth = 2.0f;
+	const uint32_t kSubdivision = 10;
 	const float kGridEvery = (kGridHalfWidth * 2.0f) / float(kSubdivision);
 	Vector3 kLocalGrid{ 0.0f,0.0f,0.0f };
 
@@ -468,4 +468,26 @@ void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, con
 		}
 	}
 
+}
+
+Vector3 Project(const Vector3& a, const Vector3& b)
+{
+	Vector3 projection{};
+	float dot_product = a.x * b.x + a.y * b.y + a.z * b.z;
+	float b_magnitude_squared = b.x * b.x + b.y * b.y + b.z * b.z;
+
+	float scalar_projection = dot_product / b_magnitude_squared;
+
+	projection.x = scalar_projection * b.x;
+	projection.y = scalar_projection * b.y;
+	projection.z = scalar_projection * b.z;
+
+	return projection;
+}
+
+Vector3 ClosestPoint(const Vector3& point, const Segment& segment)
+{
+	point;
+	segment;
+	return Vector3();
 }

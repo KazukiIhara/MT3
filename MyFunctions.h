@@ -43,6 +43,24 @@ struct Sphere
 	float radius;//半径
 };
 
+struct Line
+{
+	Vector3 origin;	//始点
+	Vector3 diff;	//終点への差分ベクトル
+};
+
+struct Ray
+{
+	Vector3 origin;	//始点
+	Vector3 diff;	//終点への差分ベクトル
+};
+
+struct Segment
+{
+	Vector3 origin;	//始点
+	Vector3 diff;	//終点への差分ベクトル
+};
+
 /*---関数---*/
 
 int Add(const int& a, const int& b);
@@ -99,3 +117,6 @@ Vector3 Cross(const Vector3& v1, const Vector3& v2);
 void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix);
 
 void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
+
+Vector3 Project(const Vector3& v1, const Vector3& v2);
+Vector3 ClosestPoint(const Vector3& point, const Segment& segment);
