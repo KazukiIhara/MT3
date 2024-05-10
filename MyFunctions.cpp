@@ -487,7 +487,27 @@ Vector3 Project(const Vector3& a, const Vector3& b)
 
 Vector3 ClosestPoint(const Vector3& point, const Segment& segment)
 {
-	point;
-	segment;
-	return Vector3();
+	// 線分をベクトルで表現
+	Vector3 v = segment.diff;
+	Vector3 w = Subtract(point, segment.origin);
+
+	// 線分の始点から点までのベクトルと、線分の方向ベクトルの内積を計算
+	float c1 = Dot(w, v);
+	if (c1 <= 0) {
+		return segment.origin; // 点が線分の始点よりも前にある場合
+	}
+
+	float c2 = Dot(v, v);
+	if (c2 <= c1) {
+		return Add(segment.origin, segment.diff); // 点が線分の終点よりも後ろにある場合
+	}
+
+	// 線分の外にある場合、点から線分までの距離を計算して最近接点を求める
+	float b = c1 / c2;
+	Vector3 closest_point{};
+	closest_point.x = segment.origin.x + b * v.x;
+	closest_point.y = segment.origin.y + b * v.y;
+	closest_point.z = segment.origin.z + b * v.z;
+
+	return closest_point;
 }

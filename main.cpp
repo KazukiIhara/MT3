@@ -21,6 +21,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	Vector3 point{ -1.5f,0.6f,0.6f };
 
 	Vector3 project = Project(Subtract(point, segment.origin), segment.diff);
+	Vector3 closestPoint = ClosestPoint(point, segment);
+
+	Sphere pointSphere{ point,0.0f,0.01f };
+	Sphere closestPointSphere{ closestPoint,0.0f,0.01f };
 
 
 	// ウィンドウの×ボタンが押されるまでループ
@@ -58,7 +62,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		/// ↓描画処理ここから
 		///
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
-
+		DrawSphere(pointSphere, viewProjectionMatrix, viewportMatrix, RED);
+		DrawSphere(closestPointSphere, viewProjectionMatrix, viewportMatrix, BLACK);
 		///
 		/// ↑描画処理ここまで
 		///
