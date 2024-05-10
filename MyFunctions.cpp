@@ -386,8 +386,8 @@ Vector3 Cross(const Vector3& v1, const Vector3& v2)
 
 void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix)
 {
-	const float kGridHalfWidth = 4.0f;
-	const uint32_t kSubdivision = 20;
+	const float kGridHalfWidth = 2.0f;
+	const uint32_t kSubdivision = 10;
 	const float kGridEvery = (kGridHalfWidth * 2.0f) / float(kSubdivision);
 	Vector3 kLocalGrid{ 0.0f,0.0f,0.0f };
 
