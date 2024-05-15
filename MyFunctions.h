@@ -41,6 +41,7 @@ struct Sphere
 	Vector3 center;//中心点
 	Vector3 rotate;//回転
 	float radius;//半径
+	int color;//色
 };
 
 struct Line
@@ -116,7 +117,9 @@ Vector3 Cross(const Vector3& v1, const Vector3& v2);
 
 void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix);
 
-void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
+void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix);
 
 Vector3 Project(const Vector3& v1, const Vector3& v2);
 Vector3 ClosestPoint(const Vector3& point, const Segment& segment);
+
+bool IsCollision(const Sphere& s1, const Sphere& s2);

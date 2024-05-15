@@ -429,7 +429,7 @@ void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMa
 
 }
 
-void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color)
+void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix)
 {
 	const uint32_t kSubdivision = 20; // 分割数
 	const float kLonEvery = 2.0f * std::numbers::pi_v<float> / float(kSubdivision); // 経度分割1つ分の角度
@@ -463,8 +463,8 @@ void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, con
 			Vector3 screenC = Transform(ndcC, viewportMatrix);
 
 			// ab, bc で線を引く
-			Novice::DrawLine(int(screenA.x), int(screenA.y), int(screenB.x), int(screenB.y), color);
-			Novice::DrawLine(int(screenA.x), int(screenA.y), int(screenC.x), int(screenC.y), color);
+			Novice::DrawLine(int(screenA.x), int(screenA.y), int(screenB.x), int(screenB.y), sphere.color);
+			Novice::DrawLine(int(screenA.x), int(screenA.y), int(screenC.x), int(screenC.y), sphere.color);
 		}
 	}
 
@@ -510,4 +510,14 @@ Vector3 ClosestPoint(const Vector3& point, const Segment& segment)
 	closest_point.z = segment.origin.z + b * v.z;
 
 	return closest_point;
+}
+
+bool IsCollision(const Sphere& s1, const Sphere& s2)
+{
+	float distance = Length(Subtract(s2.center, s1.center));
+	if (distance <= Add(s1.radius, s2.radius))
+	{
+		return true;
+	}
+	return false;
 }
