@@ -62,6 +62,12 @@ struct Segment
 	Vector3 diff;	//終点への差分ベクトル
 };
 
+struct Plane
+{
+	Vector3 normal;
+	float distance;
+};
+
 /*---関数---*/
 
 int Add(const int& a, const int& b);
@@ -119,7 +125,12 @@ void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMa
 
 void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix);
 
+void DrawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
+
 Vector3 Project(const Vector3& v1, const Vector3& v2);
 Vector3 ClosestPoint(const Vector3& point, const Segment& segment);
 
+Vector3 Perpendicular(const Vector3& vector);
+
 bool IsCollision(const Sphere& s1, const Sphere& s2);
+bool IsCollision(const Sphere& sphere, const Plane& plane);

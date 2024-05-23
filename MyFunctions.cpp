@@ -106,12 +106,14 @@ Vector3 Normalize(Vector3 a)
 	float length = Length(a);
 	Vector3 normalizedVector;
 
-	if (length != 0) {
+	if (length != 0)
+	{
 		normalizedVector.x = a.x / length;
 		normalizedVector.y = a.y / length;
 		normalizedVector.z = a.z / length;
 	}
-	else {
+	else
+	{
 		normalizedVector.x = 0;
 		normalizedVector.y = 0;
 		normalizedVector.z = 0;
@@ -179,16 +181,21 @@ Matrix4x4 Inverse(const Matrix4x4& a)
 	Matrix4x4 B = MakeIdentity4x4();
 
 	int i, j, k;
-	for (i = 0; i < 4; ++i) {
+	for (i = 0; i < 4; ++i)
+	{
 		float scale = 1.0f / A.m[i][i];
-		for (j = 0; j < 4; ++j) {
+		for (j = 0; j < 4; ++j)
+		{
 			A.m[i][j] *= scale;
 			B.m[i][j] *= scale;
 		}
-		for (k = 0; k < 4; ++k) {
-			if (k != i) {
+		for (k = 0; k < 4; ++k)
+		{
+			if (k != i)
+			{
 				float factor = A.m[k][i];
-				for (j = 0; j < 4; ++j) {
+				for (j = 0; j < 4; ++j)
+				{
 					A.m[k][j] -= factor * A.m[i][j];
 					B.m[k][j] -= factor * B.m[i][j];
 				}
@@ -199,10 +206,13 @@ Matrix4x4 Inverse(const Matrix4x4& a)
 	return B;
 }
 
-Matrix4x4 Transpose(const Matrix4x4& a) {
+Matrix4x4 Transpose(const Matrix4x4& a)
+{
 	Matrix4x4 result;
-	for (int i = 0; i < 4; ++i) {
-		for (int j = 0; j < 4; ++j) {
+	for (int i = 0; i < 4; ++i)
+	{
+		for (int j = 0; j < 4; ++j)
+		{
 			result.m[i][j] = a.m[j][i];
 		}
 	}
@@ -234,7 +244,8 @@ void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix, const char* label
 	Novice::ScreenPrintf(x, y, "%s", label);
 }
 
-Matrix4x4 MakeTranslateMatrix(const Vector3& translate) {
+Matrix4x4 MakeTranslateMatrix(const Vector3& translate)
+{
 	Matrix4x4 result = {
 	   { 1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f ,
@@ -470,6 +481,30 @@ void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, con
 
 }
 
+void DrawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color)
+{
+	Vector3 center = Multiply(plane.distance, plane.normal);
+	Vector3 perpendiculars[4];
+	perpendiculars[0] = Normalize(Perpendicular(plane.normal));
+	perpendiculars[1] = { -perpendiculars[0].x,-perpendiculars[0].y,-perpendiculars[0].z };
+	perpendiculars[2] = Cross(plane.normal, perpendiculars[0]);
+	perpendiculars[3] = { -perpendiculars[2].x,-perpendiculars[2].y,-perpendiculars[2].z };
+
+	Vector3 points[4]{};
+	for (int32_t index = 0; index < 4; ++index)
+	{
+		Vector3 extend = Multiply(2.0f, perpendiculars[index]);
+		Vector3 point = Add(center, extend);
+		points[index] = Transform(Transform(point, viewProjectionMatrix), viewportMatrix);
+	}
+
+	Novice::DrawLine(int(points[2].x), int(points[2].y), int(points[1].x), int(points[1].y), color);
+	Novice::DrawLine(int(points[1].x), int(points[1].y), int(points[3].x), int(points[3].y), color);
+	Novice::DrawLine(int(points[2].x), int(points[2].y), int(points[0].x), int(points[0].y), color);
+	Novice::DrawLine(int(points[3].x), int(points[3].y), int(points[0].x), int(points[0].y), color);
+
+}
+
 Vector3 Project(const Vector3& a, const Vector3& b)
 {
 	Vector3 projection{};
@@ -493,12 +528,14 @@ Vector3 ClosestPoint(const Vector3& point, const Segment& segment)
 
 	// 線分の始点から点までのベクトルと、線分の方向ベクトルの内積を計算
 	float c1 = Dot(w, v);
-	if (c1 <= 0) {
+	if (c1 <= 0)
+	{
 		return segment.origin; // 点が線分の始点よりも前にある場合
 	}
 
 	float c2 = Dot(v, v);
-	if (c2 <= c1) {
+	if (c2 <= c1)
+	{
 		return Add(segment.origin, segment.diff); // 点が線分の終点よりも後ろにある場合
 	}
 
@@ -512,6 +549,15 @@ Vector3 ClosestPoint(const Vector3& point, const Segment& segment)
 	return closest_point;
 }
 
+Vector3 Perpendicular(const Vector3& vector)
+{
+	if (vector.x != 0.0f || vector.y != 0.0f)
+	{
+		return { -vector.y,vector.x,0.0f };
+	}
+	return { 0.0f,-vector.z,vector.y };
+}
+
 bool IsCollision(const Sphere& s1, const Sphere& s2)
 {
 	float distance = Length(Subtract(s2.center, s1.center));
@@ -520,4 +566,18 @@ bool IsCollision(const Sphere& s1, const Sphere& s2)
 		return true;
 	}
 	return false;
+}
+
+bool IsCollision(const Sphere& sphere, const Plane& plane)
+{
+	float distance = fabs(Dot(sphere.center, plane.normal) - plane.distance);
+
+	if (distance < sphere.radius)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }

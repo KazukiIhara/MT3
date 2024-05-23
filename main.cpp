@@ -25,11 +25,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	sphere1.radius = 1.0f;
 	sphere1.color = WHITE;
 
-	Sphere sphere2{};
-	sphere2.center = { 2.0f,0.0f,3.0f };
-	sphere2.rotate = { 0.0f,0.0f,0.0f };
-	sphere2.radius = 1.0f;
-	sphere2.color = WHITE;
+	Plane plane{};
+	plane.normal = { 0.0f,1.0f,0.0f };
+	plane.distance = 1.0f;
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0)
@@ -49,6 +47,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		ImGui::DragFloat3("sphereTranslate", &sphere1.center.x, 0.01f);
 		ImGui::DragFloat3("sphereRotate", &sphere1.rotate.x, 0.01f);
 		ImGui::DragFloat("sphereRadius", &sphere1.radius, 0.01f);
+		ImGui::DragFloat3("Plane.Normal", &plane.normal.x, 0.01f);
+		plane.normal = Normalize(plane.normal);
+		ImGui::DragFloat("Plane.Distance", &plane.distance, 0.01f);
 		ImGui::End();
 
 		///
@@ -60,7 +61,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kScreenWidth), float(kScreenHeight), 0.0f, 1.0f);
 		Matrix4x4 viewProjectionMatrix = Multiply(viewMatrix, projectionMatrix);
 
-		if (IsCollision(sphere1, sphere2))
+		if (IsCollision(sphere1, plane))
 		{
 			sphere1.color = RED;
 		}
@@ -77,7 +78,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		/// ↓描画処理ここから
 		///
 		DrawSphere(sphere1, viewProjectionMatrix, viewportMatrix);
-		DrawSphere(sphere2, viewProjectionMatrix, viewportMatrix);
+		DrawPlane(plane, viewProjectionMatrix, viewportMatrix, GREEN);
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
 		///
 		/// ↑描画処理ここまで
@@ -87,7 +88,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		Novice::EndFrame();
 
 		// ESCキーが押されたらループを抜ける
-		if (preKeys[DIK_ESCAPE] == 0 && keys[DIK_ESCAPE] != 0) { break; }
+		if (preKeys[DIK_ESCAPE] == 0 && keys[DIK_ESCAPE] != 0)
+		{
+			break;
+		}
 	}
 
 	// ライブラリの終了
