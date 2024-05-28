@@ -14,21 +14,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	char keys[256] = { 0 };
 	char preKeys[256] = { 0 };
 
-	Vector3 sphereRotate{ 0.0f,0.0f,0.0f };
-
-	Vector3 cameraTranslate{ 0.0f,1.9f,-6.49f };
-	Vector3 cameraRotate{ 0.26f,0.0f,0.0f };
-
+	Vector3 cameraTranslate{ 4.07f,3.13f,-0.9f };
+	Vector3 cameraRotate{ 0.66f,-1.43f,0.0f };
 
 	Segment line{};
-	line.origin = { 0.0f,0.0f,0.0f };
-	line.diff = { 0.0f,3.0f,0.0f };
+	line.origin = { -0.19f,-0.21f,0.09f };
+	line.diff = { 0.598f,1.15f,-0.54f };
 
 	int lineColor = WHITE;
 
-	Plane plane{};
-	plane.normal = { 0.0f,1.0f,0.0f };
-	plane.distance = 1.0f;
+	Triangle tri{};
+	tri.vertices[0] = { -1.0f,0.0f,0.0f };
+	tri.vertices[1] = { 0.0f,1.0f,0.0f };
+	tri.vertices[2] = { 1.0f,0.0f,0.0f };
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0)
@@ -45,12 +43,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		ImGui::Begin("Window");
 		ImGui::DragFloat3("cameraTranslate", &cameraTranslate.x, 0.01f);
 		ImGui::DragFloat3("cameraRotate", &cameraRotate.x, 0.01f);
-		ImGui::DragFloat3("Plane.Normal", &plane.normal.x, 0.01f);
 		ImGui::DragFloat3("segment.origin", &line.origin.x, 0.01f);
 		ImGui::DragFloat3("segment.diff", &line.diff.x, 0.01f);
+		ImGui::DragFloat3("triangle.verteice1", &tri.vertices[0].x, 0.01f);
+		ImGui::DragFloat3("triangle.verteice2", &tri.vertices[1].x, 0.01f);
+		ImGui::DragFloat3("triangle.verteice3", &tri.vertices[2].x, 0.01f);
 
-		plane.normal = Normalize(plane.normal);
-		ImGui::DragFloat("Plane.Distance", &plane.distance, 0.01f);
 		ImGui::End();
 
 		///
@@ -62,7 +60,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kScreenWidth), float(kScreenHeight), 0.0f, 1.0f);
 		Matrix4x4 viewProjectionMatrix = Multiply(viewMatrix, projectionMatrix);
 
-		if (IsCollision(line, plane))
+		if (IsCollision(tri, line))
 		{
 			lineColor = RED;
 		}
@@ -78,9 +76,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		///
 		/// ↓描画処理ここから
 		///
-		DrawLine(line, viewProjectionMatrix, viewportMatrix, lineColor);
-		DrawPlane(plane, viewProjectionMatrix, viewportMatrix, GREEN);
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
+		DrawTriangle(tri, viewProjectionMatrix, viewportMatrix, WHITE);
+		DrawLine(line, viewProjectionMatrix, viewportMatrix, lineColor);
 		///
 		/// ↑描画処理ここまで
 		///
