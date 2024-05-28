@@ -514,6 +514,20 @@ void DrawLine(const Segment& line, const Matrix4x4& viewProjectionMatrix, const 
 	Novice::DrawLine(int(points[0].x), int(points[0].y), int(points[1].x), int(points[1].y), color);
 }
 
+void DrawTriangle(const Triangle& triangle, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color)
+{
+	Vector3 points[3]{};
+	points[0] = Transform(Transform(triangle.vertices[0], viewProjectionMatrix), viewportMatrix);
+	points[1] = Transform(Transform(triangle.vertices[1], viewProjectionMatrix), viewportMatrix);
+	points[2] = Transform(Transform(triangle.vertices[2], viewProjectionMatrix), viewportMatrix);
+
+	Novice::DrawTriangle(
+		int(points[0].x), int(points[0].y),
+		int(points[1].x), int(points[1].y),
+		int(points[2].x), int(points[2].y),
+		color, kFillModeWireFrame);
+}
+
 
 Vector3 Project(const Vector3& a, const Vector3& b)
 {
@@ -616,3 +630,57 @@ bool IsCollision(const Segment& line, const Plane& plane)
 
 }
 
+bool IsCollision(const Triangle& triangle, const Segment& line)
+{
+
+	Plane plane = CreatePlaneFromTriangle(triangle);
+
+	if (!IsCollision(line, plane))
+	{
+		return false;
+	}
+
+	Vector3 v01 = Subtract(triangle.vertices[1], triangle.vertices[0]);
+	Vector3 v12 = Subtract(triangle.vertices[2], triangle.vertices[1]);
+	Vector3 v20 = Subtract(triangle.vertices[0], triangle.vertices[2]);
+
+	Vector3 normal = Cross(v01, v12); // 三角形の法線ベクトルを計算
+
+	float dot = Dot(plane.normal, line.diff);
+
+	float t = (plane.distance - Dot(line.origin, plane.normal)) / dot;
+
+	Vector3 p = Add(line.origin, Multiply(t, line.diff)); // 線分の終点を計算
+
+	Vector3 v1p = Subtract(p, triangle.vertices[0]);
+	Vector3 v2p = Subtract(p, triangle.vertices[1]);
+	Vector3 v0p = Subtract(p, triangle.vertices[2]);
+
+	/*各辺を結んだベクトルと、頂点と衝突店pを結んだベクトルのクロス積をとる*/
+	Vector3 cross01 = Cross(v01, v1p);
+	Vector3 cross12 = Cross(v12, v2p);
+	Vector3 cross20 = Cross(v20, v0p);
+
+	/*すべての小三角形のクロス積と法線が同じ方向を向いていたら衝突*/
+	if (Dot(cross01, normal) >= 0.0f &&
+		Dot(cross12, normal) >= 0.0f &&
+		Dot(cross20, normal) >= 0.0f)
+	{
+		return true; // 衝突
+	}
+
+	return false; // 衝突していない
+}
+
+Plane CreatePlaneFromTriangle(const Triangle& triangle)
+{
+	Vector3 AB = Subtract(triangle.vertices[1], triangle.vertices[0]);
+	Vector3 AC = Subtract(triangle.vertices[2], triangle.vertices[0]);
+
+	Plane plane{};
+	plane.normal = Cross(AB, AC);
+	plane.normal = Normalize(plane.normal);
+	plane.distance = Dot(plane.normal, triangle.vertices[0]);
+
+	return plane;
+}

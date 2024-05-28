@@ -8,8 +8,8 @@
 #define _USE_MATH_DIFINES
 
 /*---定数---*/
-static const int kScreenWidth = 1920;//ウィンドウの横幅
-static const int kScreenHeight = 1080;//ウィンドウの高さ
+static const int kScreenWidth = 1280;//ウィンドウの横幅
+static const int kScreenHeight = 720;//ウィンドウの高さ
 
 static const int kRowHeight = 24;
 static const int kColumnWidth = 60;//Vector3を画面に描画する時に使う定数
@@ -134,6 +134,7 @@ void DrawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const 
 
 void DrawLine(const Segment& line, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
 
+void DrawTriangle(const Triangle& triangle, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
 
 Vector3 Project(const Vector3& v1, const Vector3& v2);
 Vector3 ClosestPoint(const Vector3& point, const Segment& segment);
@@ -142,4 +143,7 @@ Vector3 Perpendicular(const Vector3& vector);
 
 bool IsCollision(const Sphere& s1, const Sphere& s2);
 bool IsCollision(const Sphere& sphere, const Plane& plane);
-bool IsCollision(const Segment&, const Plane& plane);
+bool IsCollision(const Segment& line, const Plane& plane);
+bool IsCollision(const Triangle& triangle, const Segment& line);
+
+Plane CreatePlaneFromTriangle(const Triangle& triangle);
