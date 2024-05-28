@@ -514,6 +514,7 @@ void DrawLine(const Segment& line, const Matrix4x4& viewProjectionMatrix, const 
 	Novice::DrawLine(int(points[0].x), int(points[0].y), int(points[1].x), int(points[1].y), color);
 }
 
+
 Vector3 Project(const Vector3& a, const Vector3& b)
 {
 	Vector3 projection{};

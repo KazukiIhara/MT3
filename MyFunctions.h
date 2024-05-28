@@ -44,6 +44,11 @@ struct Sphere
 	int color;//色
 };
 
+struct Triangle
+{
+	Vector3 vertices[3];
+};
+
 struct Line
 {
 	Vector3 origin;	//始点
