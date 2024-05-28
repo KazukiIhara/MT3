@@ -505,6 +505,15 @@ void DrawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const 
 
 }
 
+void DrawLine(const Segment& line, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color)
+{
+	Vector3 points[2]{};
+	points[0] = Transform(Transform(line.origin, viewProjectionMatrix), viewportMatrix);
+	points[1] = Transform(Transform(Add(line.origin, line.diff), viewProjectionMatrix), viewportMatrix);
+
+	Novice::DrawLine(int(points[0].x), int(points[0].y), int(points[1].x), int(points[1].y), color);
+}
+
 Vector3 Project(const Vector3& a, const Vector3& b)
 {
 	Vector3 projection{};
@@ -581,3 +590,28 @@ bool IsCollision(const Sphere& sphere, const Plane& plane)
 		return false;
 	}
 }
+
+bool IsCollision(const Segment& line, const Plane& plane)
+{
+	float dot = Dot(plane.normal, line.diff);
+
+	if (dot == 0.0f)
+	{
+		float dist = Dot(line.origin, plane.normal) - plane.distance;
+		if (dist == 0.0f)
+		{
+			return false;
+		}
+	}
+
+	float t = (plane.distance - Dot(line.origin, plane.normal)) / dot;
+
+	if (t >= 0.0f && t <= 1.0f)
+	{
+		return true;
+	}
+
+	return false;
+
+}
+
