@@ -14,8 +14,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	char keys[256] = { 0 };
 	char preKeys[256] = { 0 };
 
-	Vector3 cameraTranslate{ 5.00f,3.00f,-2.8f };
-	Vector3 cameraRotate{ 0.45f,-1.00f,0.0f };
+	Vector3 cameraTranslate{ 0.00f,1.90f,-5.0f };
+	Vector3 cameraRotate{ 0.39f,0.0f,0.0f };
 
 	AABB aabb1
 	{
@@ -23,10 +23,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		.max{0.0f,0.0f,0.0f},
 	};
 	uint32_t aabb1Color = 0xffffffff;
-	AABB aabb2
+
+	Sphere sphere
 	{
-		.min{0.2f,0.2f,0.2f},
-		.max{1.0f,1.0f,1.0f},
+		.center = {1.0f,0.0f,0.0f},
+		.rotate = {0.0f,0.0f,0.0f},
+		.radius = 0.6f,
+		.color = WHITE,
 	};
 
 	// ウィンドウの×ボタンが押されるまでループ
@@ -46,9 +49,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		ImGui::DragFloat3("cameraRotate", &cameraRotate.x, 0.01f);
 		ImGui::DragFloat3("AABB1 min", &aabb1.min.x, 0.01f);
 		ImGui::DragFloat3("AABB1 max", &aabb1.max.x, 0.01f);
-		ImGui::DragFloat3("AABB2 min", &aabb2.min.x, 0.01f);
-		ImGui::DragFloat3("AABB2 max", &aabb2.max.x, 0.01f);
 
+		aabb1.min.x = (std::min)(aabb1.min.x, aabb1.max.x);
+		aabb1.max.x = (std::max)(aabb1.min.x, aabb1.max.x);
+		aabb1.min.y = (std::min)(aabb1.min.y, aabb1.max.y);
+		aabb1.max.y = (std::max)(aabb1.min.y, aabb1.max.y);
+		aabb1.min.z = (std::min)(aabb1.min.z, aabb1.max.z);
+		aabb1.max.z = (std::max)(aabb1.min.z, aabb1.max.z);
+
+		ImGui::DragFloat3("Sphere center", &sphere.center.x, 0.01f);
+		ImGui::DragFloat("Sphere radius", &sphere.radius, 0.01f);
 		ImGui::End();
 
 		///
@@ -60,7 +70,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kScreenWidth), float(kScreenHeight), 0.0f, 1.0f);
 		Matrix4x4 viewProjectionMatrix = Multiply(viewMatrix, projectionMatrix);
 
-		if (IsCollision(aabb1, aabb2))
+		if (IsCollision(aabb1, sphere))
 		{
 			aabb1Color = RED;
 		}
@@ -79,7 +89,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
 
 		DrawAABB(aabb1, viewProjectionMatrix, viewportMatrix, aabb1Color);
-		DrawAABB(aabb2, viewProjectionMatrix, viewportMatrix, 0xffffffff);
+		DrawSphere(sphere, viewProjectionMatrix, viewportMatrix);
 
 		///
 		/// ↑描画処理ここまで

@@ -1,5 +1,7 @@
 ﻿#include "MyFunctions.h"
 #include <Novice.h>
+#include <algorithm>
+
 
 /*---関数定義---*/
 
@@ -720,6 +722,23 @@ bool IsCollision(const AABB& aabb1, const AABB& aabb2)
 	// すべての軸について交差しているため、AABB同士が交差しています。
 	return true;
 }
+
+bool IsCollision(const AABB& aabb, const Sphere& sphere)
+{
+	// AABBの各辺と球の中心との最短距離を計算します。
+	float x = std::clamp(sphere.center.x, aabb.min.x, aabb.max.x);
+	float y = std::clamp(sphere.center.y, aabb.min.y, aabb.max.y);
+	float z = std::clamp(sphere.center.z, aabb.min.z, aabb.max.z);
+
+	// 点と球の中心との距離を計算します。
+	float distance = std::sqrt((x - sphere.center.x) * (x - sphere.center.x) +
+		(y - sphere.center.y) * (y - sphere.center.y) +
+		(z - sphere.center.z) * (z - sphere.center.z));
+
+	// 距離が球の半径より小さいかどうかを返します。
+	return distance < sphere.radius;
+}
+
 Plane CreatePlaneFromTriangle(const Triangle& triangle)
 {
 	Vector3 AB = Subtract(triangle.vertices[1], triangle.vertices[0]);
