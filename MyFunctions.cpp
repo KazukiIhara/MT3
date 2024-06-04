@@ -528,6 +528,40 @@ void DrawTriangle(const Triangle& triangle, const Matrix4x4& viewProjectionMatri
 		color, kFillModeWireFrame);
 }
 
+void DrawAABB(const AABB& aabb, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color)
+{
+	// AABBの8つの頂点を計算
+	Vector3 vertices[8] = {
+		{aabb.min.x, aabb.min.y, aabb.min.z},
+		{aabb.max.x, aabb.min.y, aabb.min.z},
+		{aabb.max.x, aabb.max.y, aabb.min.z},
+		{aabb.min.x, aabb.max.y, aabb.min.z},
+		{aabb.min.x, aabb.min.y, aabb.max.z},
+		{aabb.max.x, aabb.min.y, aabb.max.z},
+		{aabb.max.x, aabb.max.y, aabb.max.z},
+		{aabb.min.x, aabb.max.y, aabb.max.z}
+	};
+
+	// 各頂点をビューポートとビュープロジェクションマトリックスに変換
+	for (int i = 0; i < 8; ++i)
+	{
+		vertices[i] = Transform(Transform(vertices[i], viewProjectionMatrix), viewportMatrix);
+	}
+
+	// AABBの辺を描画
+	Novice::DrawLine(int(vertices[1].x), int(vertices[1].y), int(vertices[2].x), int(vertices[2].y), color);
+	Novice::DrawLine(int(vertices[2].x), int(vertices[2].y), int(vertices[3].x), int(vertices[3].y), color);
+	Novice::DrawLine(int(vertices[3].x), int(vertices[3].y), int(vertices[0].x), int(vertices[0].y), color);
+	Novice::DrawLine(int(vertices[4].x), int(vertices[4].y), int(vertices[5].x), int(vertices[5].y), color);
+	Novice::DrawLine(int(vertices[5].x), int(vertices[5].y), int(vertices[6].x), int(vertices[6].y), color);
+	Novice::DrawLine(int(vertices[6].x), int(vertices[6].y), int(vertices[7].x), int(vertices[7].y), color);
+	Novice::DrawLine(int(vertices[7].x), int(vertices[7].y), int(vertices[4].x), int(vertices[4].y), color);
+	Novice::DrawLine(int(vertices[0].x), int(vertices[0].y), int(vertices[4].x), int(vertices[4].y), color);
+	Novice::DrawLine(int(vertices[1].x), int(vertices[1].y), int(vertices[5].x), int(vertices[5].y), color);
+	Novice::DrawLine(int(vertices[2].x), int(vertices[2].y), int(vertices[6].x), int(vertices[6].y), color);
+	Novice::DrawLine(int(vertices[3].x), int(vertices[3].y), int(vertices[7].x), int(vertices[7].y), color);
+}
+
 
 Vector3 Project(const Vector3& a, const Vector3& b)
 {
