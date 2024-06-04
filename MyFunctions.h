@@ -153,5 +153,6 @@ bool IsCollision(const Sphere& s1, const Sphere& s2);
 bool IsCollision(const Sphere& sphere, const Plane& plane);
 bool IsCollision(const Segment& line, const Plane& plane);
 bool IsCollision(const Triangle& triangle, const Segment& line);
+bool IsCollision(const AABB& aabb1, const AABB& aabb2);
 
 Plane CreatePlaneFromTriangle(const Triangle& triangle);

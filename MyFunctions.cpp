@@ -549,6 +549,7 @@ void DrawAABB(const AABB& aabb, const Matrix4x4& viewProjectionMatrix, const Mat
 	}
 
 	// AABBの辺を描画
+	Novice::DrawLine(int(vertices[0].x), int(vertices[0].y), int(vertices[1].x), int(vertices[1].y), color);
 	Novice::DrawLine(int(vertices[1].x), int(vertices[1].y), int(vertices[2].x), int(vertices[2].y), color);
 	Novice::DrawLine(int(vertices[2].x), int(vertices[2].y), int(vertices[3].x), int(vertices[3].y), color);
 	Novice::DrawLine(int(vertices[3].x), int(vertices[3].y), int(vertices[0].x), int(vertices[0].y), color);
@@ -706,6 +707,19 @@ bool IsCollision(const Triangle& triangle, const Segment& line)
 	return false; // 衝突していない
 }
 
+bool IsCollision(const AABB& aabb1, const AABB& aabb2)
+{
+	// AABB同士が交差しているかどうかを判定します。
+	// それぞれの軸について、一方の最大値が他方の最小値より大きく、
+	// かつ一方の最小値が他方の最大値より小さい場合、その軸について交差しています。
+	// すべての軸についてこれが成り立つ場合、AABB同士が交差しています。
+	if (aabb1.max.x < aabb2.min.x || aabb1.min.x > aabb2.max.x) return false;
+	if (aabb1.max.y < aabb2.min.y || aabb1.min.y > aabb2.max.y) return false;
+	if (aabb1.max.z < aabb2.min.z || aabb1.min.z > aabb2.max.z) return false;
+
+	// すべての軸について交差しているため、AABB同士が交差しています。
+	return true;
+}
 Plane CreatePlaneFromTriangle(const Triangle& triangle)
 {
 	Vector3 AB = Subtract(triangle.vertices[1], triangle.vertices[0]);
