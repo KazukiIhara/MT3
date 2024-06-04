@@ -528,6 +528,41 @@ void DrawTriangle(const Triangle& triangle, const Matrix4x4& viewProjectionMatri
 		color, kFillModeWireFrame);
 }
 
+void DrawAABB(const AABB& aabb, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color)
+{
+	// AABBの8つの頂点を計算
+	Vector3 vertices[8] = {
+		{aabb.min.x, aabb.min.y, aabb.min.z},
+		{aabb.max.x, aabb.min.y, aabb.min.z},
+		{aabb.max.x, aabb.max.y, aabb.min.z},
+		{aabb.min.x, aabb.max.y, aabb.min.z},
+		{aabb.min.x, aabb.min.y, aabb.max.z},
+		{aabb.max.x, aabb.min.y, aabb.max.z},
+		{aabb.max.x, aabb.max.y, aabb.max.z},
+		{aabb.min.x, aabb.max.y, aabb.max.z}
+	};
+
+	// 各頂点をビューポートとビュープロジェクションマトリックスに変換
+	for (int i = 0; i < 8; ++i)
+	{
+		vertices[i] = Transform(Transform(vertices[i], viewProjectionMatrix), viewportMatrix);
+	}
+
+	// AABBの辺を描画
+	Novice::DrawLine(int(vertices[0].x), int(vertices[0].y), int(vertices[1].x), int(vertices[1].y), color);
+	Novice::DrawLine(int(vertices[1].x), int(vertices[1].y), int(vertices[2].x), int(vertices[2].y), color);
+	Novice::DrawLine(int(vertices[2].x), int(vertices[2].y), int(vertices[3].x), int(vertices[3].y), color);
+	Novice::DrawLine(int(vertices[3].x), int(vertices[3].y), int(vertices[0].x), int(vertices[0].y), color);
+	Novice::DrawLine(int(vertices[4].x), int(vertices[4].y), int(vertices[5].x), int(vertices[5].y), color);
+	Novice::DrawLine(int(vertices[5].x), int(vertices[5].y), int(vertices[6].x), int(vertices[6].y), color);
+	Novice::DrawLine(int(vertices[6].x), int(vertices[6].y), int(vertices[7].x), int(vertices[7].y), color);
+	Novice::DrawLine(int(vertices[7].x), int(vertices[7].y), int(vertices[4].x), int(vertices[4].y), color);
+	Novice::DrawLine(int(vertices[0].x), int(vertices[0].y), int(vertices[4].x), int(vertices[4].y), color);
+	Novice::DrawLine(int(vertices[1].x), int(vertices[1].y), int(vertices[5].x), int(vertices[5].y), color);
+	Novice::DrawLine(int(vertices[2].x), int(vertices[2].y), int(vertices[6].x), int(vertices[6].y), color);
+	Novice::DrawLine(int(vertices[3].x), int(vertices[3].y), int(vertices[7].x), int(vertices[7].y), color);
+}
+
 
 Vector3 Project(const Vector3& a, const Vector3& b)
 {
@@ -672,6 +707,19 @@ bool IsCollision(const Triangle& triangle, const Segment& line)
 	return false; // 衝突していない
 }
 
+bool IsCollision(const AABB& aabb1, const AABB& aabb2)
+{
+	// AABB同士が交差しているかどうかを判定します。
+	// それぞれの軸について、一方の最大値が他方の最小値より大きく、
+	// かつ一方の最小値が他方の最大値より小さい場合、その軸について交差しています。
+	// すべての軸についてこれが成り立つ場合、AABB同士が交差しています。
+	if (aabb1.max.x < aabb2.min.x || aabb1.min.x > aabb2.max.x) return false;
+	if (aabb1.max.y < aabb2.min.y || aabb1.min.y > aabb2.max.y) return false;
+	if (aabb1.max.z < aabb2.min.z || aabb1.min.z > aabb2.max.z) return false;
+
+	// すべての軸について交差しているため、AABB同士が交差しています。
+	return true;
+}
 Plane CreatePlaneFromTriangle(const Triangle& triangle)
 {
 	Vector3 AB = Subtract(triangle.vertices[1], triangle.vertices[0]);
