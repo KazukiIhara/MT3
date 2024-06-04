@@ -41,7 +41,7 @@ struct Sphere
 	Vector3 center;//中心点
 	Vector3 rotate;//回転
 	float radius;//半径
-	int color;//色
+	uint32_t color;//色
 };
 
 struct Triangle
@@ -154,5 +154,6 @@ bool IsCollision(const Sphere& sphere, const Plane& plane);
 bool IsCollision(const Segment& line, const Plane& plane);
 bool IsCollision(const Triangle& triangle, const Segment& line);
 bool IsCollision(const AABB& aabb1, const AABB& aabb2);
+bool IsCollision(const AABB& aabb, const Sphere& sphere);
 
 Plane CreatePlaneFromTriangle(const Triangle& triangle);
