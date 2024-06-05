@@ -709,15 +709,20 @@ bool IsCollision(const Triangle& triangle, const Segment& line)
 
 bool IsCollision(const AABB& aabb1, const AABB& aabb2)
 {
-	// AABB同士が交差しているかどうかを判定します。
-	// それぞれの軸について、一方の最大値が他方の最小値より大きく、
-	// かつ一方の最小値が他方の最大値より小さい場合、その軸について交差しています。
-	// すべての軸についてこれが成り立つ場合、AABB同士が交差しています。
-	if (aabb1.max.x < aabb2.min.x || aabb1.min.x > aabb2.max.x) return false;
-	if (aabb1.max.y < aabb2.min.y || aabb1.min.y > aabb2.max.y) return false;
-	if (aabb1.max.z < aabb2.min.z || aabb1.min.z > aabb2.max.z) return false;
-
-	// すべての軸について交差しているため、AABB同士が交差しています。
+	/*交差していない条件があればfalseでリターン*/
+	if (aabb1.max.x < aabb2.min.x || aabb1.min.x > aabb2.max.x)
+	{
+		return false;
+	}
+	if (aabb1.max.y < aabb2.min.y || aabb1.min.y > aabb2.max.y)
+	{
+		return false;
+	}
+	if (aabb1.max.z < aabb2.min.z || aabb1.min.z > aabb2.max.z)
+	{
+		return false;
+	}
+	/*それ以外ならtrue*/
 	return true;
 }
 Plane CreatePlaneFromTriangle(const Triangle& triangle)
