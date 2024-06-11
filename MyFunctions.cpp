@@ -808,10 +808,10 @@ bool IsCollision(const AABB& aabb, const Segment& segment)
 
 bool IsCollision(const OBB& obb, const Sphere& sphere)
 {
-	// Step 1: Transform sphere center to OBB local space
+
 	Vector3 localSphereCenter = sphere.center - obb.center;
 
-	// Project sphere center onto each OBB axis to get local coordinates
+
 	Vector3 closestPoint = obb.center;
 	for (int i = 0; i < 3; ++i)
 	{
@@ -840,7 +840,6 @@ bool IsCollision(const OBB& obb, const Sphere& sphere)
 		closestPoint = closestPoint + obb.orientations[i] * distance;
 	}
 
-	// Step 2: Check for collision with AABB
 	Vector3 diff = closestPoint - sphere.center;
 	float distanceSquared = diff.dot(diff);
 	return distanceSquared <= (sphere.radius * sphere.radius);
