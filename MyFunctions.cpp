@@ -1,4 +1,5 @@
-﻿#include "MyFunctions.h"
+﻿#define NOMINMAX
+#include "MyFunctions.h"
 #include <Novice.h>
 #include <algorithm>
 
@@ -737,6 +738,32 @@ bool IsCollision(const AABB& aabb, const Sphere& sphere)
 
 	// 距離が球の半径より小さいかどうかを返します。
 	return distance < sphere.radius;
+}
+
+bool IsCollision(const AABB& aabb, const Segment& segment)
+{
+	Vector3 dirfrac;
+	dirfrac.x = 1.0f / segment.diff.x;
+	dirfrac.y = 1.0f / segment.diff.y;
+	dirfrac.z = 1.0f / segment.diff.z;
+
+	Vector3 t1 = Multiply(Subtract(aabb.min, segment.origin), dirfrac);
+	Vector3 t2 = Multiply(Subtract(aabb.max, segment.origin), dirfrac);
+
+	float tmin = std::max(std::max(std::min(t1.x, t2.x), std::min(t1.y, t2.y)), std::min(t1.z, t2.z));
+	float tmax = std::min(std::min(std::max(t1.x, t2.x), std::max(t1.y, t2.y)), std::max(t1.z, t2.z));
+
+	if (tmin > 1 || tmax < 0)
+	{
+		return false;
+	}
+
+	if (tmin > tmax)
+	{
+		return false;
+	}
+
+	return true;
 }
 
 Plane CreatePlaneFromTriangle(const Triangle& triangle)

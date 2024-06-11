@@ -155,5 +155,6 @@ bool IsCollision(const Segment& line, const Plane& plane);
 bool IsCollision(const Triangle& triangle, const Segment& line);
 bool IsCollision(const AABB& aabb1, const AABB& aabb2);
 bool IsCollision(const AABB& aabb, const Sphere& sphere);
+bool IsCollision(const AABB& aabb, const Segment& segment);
 
 Plane CreatePlaneFromTriangle(const Triangle& triangle);
