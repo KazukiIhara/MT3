@@ -566,6 +566,46 @@ void DrawAABB(const AABB& aabb, const Matrix4x4& viewProjectionMatrix, const Mat
 	Novice::DrawLine(int(vertices[3].x), int(vertices[3].y), int(vertices[7].x), int(vertices[7].y), color);
 }
 
+void DrawOBB(const OBB& obb, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color)
+{
+	// OBBの8つの頂点を計算
+	Vector3 vertices[8] = {
+		Subtract(Subtract(Subtract(obb.center, Multiply(obb.size.x, obb.orientations[0])), Multiply(obb.size.y, obb.orientations[1])), Multiply(obb.size.z, obb.orientations[2])),
+		
+		Add(Subtract(Subtract(obb.center, Multiply(obb.size.x, obb.orientations[0])), Multiply(obb.size.y, obb.orientations[1])), Multiply(obb.size.z, obb.orientations[2])),
+		
+		Add(Add(Subtract(obb.center, Multiply(obb.size.x, obb.orientations[0])), Multiply(obb.size.y, obb.orientations[1])), Multiply(obb.size.z, obb.orientations[2])),
+		
+		Subtract(Add(Subtract(obb.center, Multiply(obb.size.x, obb.orientations[0])), Multiply(obb.size.y, obb.orientations[1])), Multiply(obb.size.z, obb.orientations[2])),
+		
+		Subtract(Subtract(Add(obb.center, Multiply(obb.size.x, obb.orientations[0])), Multiply(obb.size.y, obb.orientations[1])), Multiply(obb.size.z, obb.orientations[2])),
+		
+		Add(Subtract(Add(obb.center, Multiply(obb.size.x, obb.orientations[0])), Multiply(obb.size.y, obb.orientations[1])), Multiply(obb.size.z, obb.orientations[2])),
+		
+		Add(Add(Add(obb.center, Multiply(obb.size.x, obb.orientations[0])), Multiply(obb.size.y, obb.orientations[1])), Multiply(obb.size.z, obb.orientations[2])),
+		
+		Subtract(Add(Add(obb.center, Multiply(obb.size.x, obb.orientations[0])), Multiply(obb.size.y, obb.orientations[1])), Multiply(obb.size.z, obb.orientations[2]))
+	};
+	// 各頂点をビューポートとビュープロジェクションマトリックスに変換
+	for (int i = 0; i < 8; ++i)
+	{
+		vertices[i] = Transform(Transform(vertices[i], viewProjectionMatrix), viewportMatrix);
+	}
+
+	// OBBの辺を描画
+	Novice::DrawLine(int(vertices[0].x), int(vertices[0].y), int(vertices[1].x), int(vertices[1].y), color);
+	Novice::DrawLine(int(vertices[1].x), int(vertices[1].y), int(vertices[2].x), int(vertices[2].y), color);
+	Novice::DrawLine(int(vertices[2].x), int(vertices[2].y), int(vertices[3].x), int(vertices[3].y), color);
+	Novice::DrawLine(int(vertices[3].x), int(vertices[3].y), int(vertices[0].x), int(vertices[0].y), color);
+	Novice::DrawLine(int(vertices[4].x), int(vertices[4].y), int(vertices[5].x), int(vertices[5].y), color);
+	Novice::DrawLine(int(vertices[5].x), int(vertices[5].y), int(vertices[6].x), int(vertices[6].y), color);
+	Novice::DrawLine(int(vertices[6].x), int(vertices[6].y), int(vertices[7].x), int(vertices[7].y), color);
+	Novice::DrawLine(int(vertices[7].x), int(vertices[7].y), int(vertices[4].x), int(vertices[4].y), color);
+	Novice::DrawLine(int(vertices[0].x), int(vertices[0].y), int(vertices[4].x), int(vertices[4].y), color);
+	Novice::DrawLine(int(vertices[1].x), int(vertices[1].y), int(vertices[5].x), int(vertices[5].y), color);
+	Novice::DrawLine(int(vertices[2].x), int(vertices[2].y), int(vertices[6].x), int(vertices[6].y), color);
+	Novice::DrawLine(int(vertices[3].x), int(vertices[3].y), int(vertices[7].x), int(vertices[7].y), color);
+}
 
 Vector3 Project(const Vector3& a, const Vector3& b)
 {
@@ -766,6 +806,45 @@ bool IsCollision(const AABB& aabb, const Segment& segment)
 	return true;
 }
 
+bool IsCollision(const OBB& obb, const Sphere& sphere)
+{
+	// Step 1: Transform sphere center to OBB local space
+	Vector3 localSphereCenter = sphere.center - obb.center;
+
+	// Project sphere center onto each OBB axis to get local coordinates
+	Vector3 closestPoint = obb.center;
+	for (int i = 0; i < 3; ++i)
+	{
+		float distance = localSphereCenter.dot(obb.orientations[i]);
+		if (i == 0)
+		{
+			if (distance > obb.size.x)
+				distance = obb.size.x;
+			if (distance < -obb.size.x)
+				distance = -obb.size.x;
+		}
+		else if (i == 1)
+		{
+			if (distance > obb.size.y)
+				distance = obb.size.y;
+			if (distance < -obb.size.y)
+				distance = -obb.size.y;
+		}
+		else if (i == 2)
+		{
+			if (distance > obb.size.z)
+				distance = obb.size.z;
+			if (distance < -obb.size.z)
+				distance = -obb.size.z;
+		}
+		closestPoint = closestPoint + obb.orientations[i] * distance;
+	}
+
+	// Step 2: Check for collision with AABB
+	Vector3 diff = closestPoint - sphere.center;
+	float distanceSquared = diff.dot(diff);
+	return distanceSquared <= (sphere.radius * sphere.radius);
+}
 Plane CreatePlaneFromTriangle(const Triangle& triangle)
 {
 	Vector3 AB = Subtract(triangle.vertices[1], triangle.vertices[0]);
