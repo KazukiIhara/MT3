@@ -571,19 +571,19 @@ void DrawOBB(const OBB& obb, const Matrix4x4& viewProjectionMatrix, const Matrix
 	// OBBの8つの頂点を計算
 	Vector3 vertices[8] = {
 		Subtract(Subtract(Subtract(obb.center, Multiply(obb.size.x, obb.orientations[0])), Multiply(obb.size.y, obb.orientations[1])), Multiply(obb.size.z, obb.orientations[2])),
-		
+
 		Add(Subtract(Subtract(obb.center, Multiply(obb.size.x, obb.orientations[0])), Multiply(obb.size.y, obb.orientations[1])), Multiply(obb.size.z, obb.orientations[2])),
-		
+
 		Add(Add(Subtract(obb.center, Multiply(obb.size.x, obb.orientations[0])), Multiply(obb.size.y, obb.orientations[1])), Multiply(obb.size.z, obb.orientations[2])),
-		
+
 		Subtract(Add(Subtract(obb.center, Multiply(obb.size.x, obb.orientations[0])), Multiply(obb.size.y, obb.orientations[1])), Multiply(obb.size.z, obb.orientations[2])),
-		
+
 		Subtract(Subtract(Add(obb.center, Multiply(obb.size.x, obb.orientations[0])), Multiply(obb.size.y, obb.orientations[1])), Multiply(obb.size.z, obb.orientations[2])),
-		
+
 		Add(Subtract(Add(obb.center, Multiply(obb.size.x, obb.orientations[0])), Multiply(obb.size.y, obb.orientations[1])), Multiply(obb.size.z, obb.orientations[2])),
-		
+
 		Add(Add(Add(obb.center, Multiply(obb.size.x, obb.orientations[0])), Multiply(obb.size.y, obb.orientations[1])), Multiply(obb.size.z, obb.orientations[2])),
-		
+
 		Subtract(Add(Add(obb.center, Multiply(obb.size.x, obb.orientations[0])), Multiply(obb.size.y, obb.orientations[1])), Multiply(obb.size.z, obb.orientations[2]))
 	};
 	// 各頂点をビューポートとビュープロジェクションマトリックスに変換
@@ -809,13 +809,12 @@ bool IsCollision(const AABB& aabb, const Segment& segment)
 bool IsCollision(const OBB& obb, const Sphere& sphere)
 {
 
-	Vector3 localSphereCenter = sphere.center - obb.center;
-
+	Vector3 localSphereCenter = Subtract(sphere.center, obb.center);
 
 	Vector3 closestPoint = obb.center;
 	for (int i = 0; i < 3; ++i)
 	{
-		float distance = localSphereCenter.dot(obb.orientations[i]);
+		float distance = Dot(localSphereCenter, obb.orientations[i]);
 		if (i == 0)
 		{
 			if (distance > obb.size.x)
@@ -837,13 +836,14 @@ bool IsCollision(const OBB& obb, const Sphere& sphere)
 			if (distance < -obb.size.z)
 				distance = -obb.size.z;
 		}
-		closestPoint = closestPoint + obb.orientations[i] * distance;
+		closestPoint = Add(closestPoint, Multiply(distance, obb.orientations[i]));
 	}
 
-	Vector3 diff = closestPoint - sphere.center;
-	float distanceSquared = diff.dot(diff);
+	Vector3 diff = Subtract(closestPoint, sphere.center);
+	float distanceSquared = Dot(diff, diff);
 	return distanceSquared <= (sphere.radius * sphere.radius);
 }
+
 Plane CreatePlaneFromTriangle(const Triangle& triangle)
 {
 	Vector3 AB = Subtract(triangle.vertices[1], triangle.vertices[0]);
