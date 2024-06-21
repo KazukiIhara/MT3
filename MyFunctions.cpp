@@ -114,8 +114,7 @@ Vector3 Normalize(Vector3 a)
 		normalizedVector.x = a.x / length;
 		normalizedVector.y = a.y / length;
 		normalizedVector.z = a.z / length;
-	}
-	else
+	} else
 	{
 		normalizedVector.x = 0;
 		normalizedVector.y = 0;
@@ -677,8 +676,7 @@ bool IsCollision(const Sphere& sphere, const Plane& plane)
 	if (distance < sphere.radius)
 	{
 		return true;
-	}
-	else
+	} else
 	{
 		return false;
 	}
@@ -821,15 +819,13 @@ bool IsCollision(const OBB& obb, const Sphere& sphere)
 				distance = obb.size.x;
 			if (distance < -obb.size.x)
 				distance = -obb.size.x;
-		}
-		else if (i == 1)
+		} else if (i == 1)
 		{
 			if (distance > obb.size.y)
 				distance = obb.size.y;
 			if (distance < -obb.size.y)
 				distance = -obb.size.y;
-		}
-		else if (i == 2)
+		} else if (i == 2)
 		{
 			if (distance > obb.size.z)
 				distance = obb.size.z;
@@ -856,3 +852,41 @@ Plane CreatePlaneFromTriangle(const Triangle& triangle)
 
 	return plane;
 }
+
+Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t)
+{
+	return Add(Multiply((1 - t), v1), Multiply(t, v2));
+}
+
+
+void DrawBezier(const Vector3& controlPoint0, const Vector3& controlPoint1, const Vector3& controlPoint2, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewPortMatrix, uint32_t color)
+{
+	// ベジェ曲線の分割数
+	const int division = 100;
+
+	// 前の点を初期化
+	Vector3 prevPoint = controlPoint0;
+
+	// ビュープロジェクション行列とビューポート行列を適用
+	prevPoint = Transform(Transform(prevPoint, viewProjectionMatrix), viewPortMatrix);
+
+	// ベジェ曲線を描画
+	for (int i = 1; i <= division; ++i)
+	{
+		// tの計算
+		float t = static_cast<float>(i) / division;
+
+		// ベジェ曲線の計算
+		Vector3 point = Lerp(Lerp(controlPoint0, controlPoint1, t), Lerp(controlPoint1, controlPoint2, t), t);
+
+		// ビュープロジェクション行列とビューポート行列を適用
+		point = Transform(Transform(point, viewProjectionMatrix), viewPortMatrix);
+
+		// 線を描画
+		Novice::DrawLine(int(prevPoint.x), int(prevPoint.y), int(point.x), int(point.y), color);
+
+		// 前の点を更新
+		prevPoint = point;
+	}
+}
+

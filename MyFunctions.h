@@ -168,3 +168,8 @@ bool IsCollision(const AABB& aabb, const Segment& segment);
 bool IsCollision(const OBB& obb, const Sphere& sphere);
 
 Plane CreatePlaneFromTriangle(const Triangle& triangle);
+
+Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
+
+void DrawBezier(const Vector3& controlPoint0, const Vector3& consrolPoint1, const Vector3& controlPoint2,
+	const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewPortMatrix, uint32_t color);
