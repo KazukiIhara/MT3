@@ -17,21 +17,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	Vector3 cameraTranslate{ 0.00f,1.90f,-5.0f };
 	Vector3 cameraRotate{ 0.39f,0.0f,0.0f };
 
-	Vector3 controlPoint[3] = {
-		{-0.8f,0.58f,1.0f},
-		{1.76f,1.0f,-0.3f},
-		{0.94f,-0.7f,2.3f},
+	Vector3 translates[3] = {
+		{0.2f,1.0f,0.0f},
+		{0.4f,0.0f,0.0f},
+		{0.3f,0.0f,0.0f},
+	};
+	Vector3 rotates[3] = {
+		{0.0f,0.0f,-6.8f},
+		{0.0f,0.0f,-1.4f},
+		{0.0f,0.0f,0.0f},
+	};
+	Vector3 scales[3] = {
+		{1.0f,1.0f,1.0f},
+		{1.0f,1.0f,1.0f},
+		{1.0f,1.0f,1.0f},
 	};
 
-	Sphere controlSphere[3] = {};
+	uint32_t color[3]{};
+	color[0] = RED;
+	color[1] = GREEN;
+	color[2] = BLUE;
 
-	for (uint32_t i = 0; i < 3; i++)
-	{
-		controlSphere[i].center = controlPoint[i];
-		controlSphere[i].color = BLACK;
-		controlSphere[i].radius = 0.01f;
-		controlSphere[i].rotate = { 0.0f,0.0f,0.0f };
-	}
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0)
@@ -48,9 +54,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		ImGui::Begin("Window");
 		ImGui::DragFloat3("cameraTranslate", &cameraTranslate.x, 0.01f);
 		ImGui::DragFloat3("cameraRotate", &cameraRotate.x, 0.01f);
-		ImGui::DragFloat3("controlPoint0", &controlSphere[0].center.x, 0.01f);
-		ImGui::DragFloat3("controlPoint1", &controlSphere[1].center.x, 0.01f);
-		ImGui::DragFloat3("controlPoint2", &controlSphere[2].center.x, 0.01f);
+
+		ImGui::DragFloat3("Scale0", &scales[0].x, 0.01f);
+		ImGui::DragFloat3("Rotate0", &rotates[0].x, 0.01f);
+		ImGui::DragFloat3("Translate0", &translates[0].x, 0.01f);
+
+		ImGui::DragFloat3("Scale1", &scales[1].x, 0.01f);
+		ImGui::DragFloat3("Rotate1", &rotates[1].x, 0.01f);
+		ImGui::DragFloat3("Translate1", &translates[1].x, 0.01f);
+
+		ImGui::DragFloat3("Scale2", &scales[2].x, 0.01f);
+		ImGui::DragFloat3("Rotate2", &rotates[2].x, 0.01f);
+		ImGui::DragFloat3("Translate2", &translates[2].x, 0.01f);
+
 
 		ImGui::End();
 
@@ -63,6 +79,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kScreenWidth), float(kScreenHeight), 0.0f, 1.0f);
 		Matrix4x4 viewProjectionMatrix = Multiply(viewMatrix, projectionMatrix);
 
+		Matrix4x4 worldMatrix[3]{};
+		Matrix4x4 localMatrix[3]{};
+		for (uint32_t i = 0; i < 3; i++)
+		{
+			localMatrix[i] = MakeAffineMatrix(scales[i], rotates[i], translates[i]);
+		}
+		worldMatrix[0] = localMatrix[0];
+		worldMatrix[1] = Multiply(MakeAffineMatrix(scales[1], rotates[1], translates[1]), localMatrix[0]);
+		worldMatrix[2] = Multiply(Multiply(MakeAffineMatrix(scales[2], rotates[2], translates[2]), localMatrix[1]), localMatrix[0]);
+
 		///
 		/// ↑更新処理ここまで
 		///
@@ -72,10 +98,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		///
 
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
-		DrawBezier(controlSphere[0].center, controlSphere[1].center, controlSphere[2].center, viewProjectionMatrix, viewportMatrix, RED);
+
+		// 各球体をつなぐ線を引くための点を求める処理
+		Vector3 screenPos[3]{};
 		for (uint32_t i = 0; i < 3; i++)
 		{
-			DrawSphere(controlSphere[i], viewProjectionMatrix, viewportMatrix);
+			Matrix4x4 wvpMatix = Multiply(worldMatrix[i], viewProjectionMatrix);
+			Vector3	ndc = Transform(Vector3(0, 0, 0), wvpMatix);
+			screenPos[i] = Transform(ndc, viewportMatrix);
+		}
+
+		Novice::DrawLine(int(screenPos[0].x), int(screenPos[0].y), int(screenPos[1].x), int(screenPos[1].y), WHITE);
+		Novice::DrawLine(int(screenPos[1].x), int(screenPos[1].y), int(screenPos[2].x), int(screenPos[2].y), WHITE);
+
+		for (uint32_t i = 0; i < 3; ++i)
+		{
+			DrawSphereWorldMatrix(worldMatrix[i], viewProjectionMatrix, viewportMatrix, color[i]);
 		}
 
 		///
