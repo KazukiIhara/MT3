@@ -17,17 +17,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	Vector3 cameraTranslate{ 0.00f,1.90f,-5.0f };
 	Vector3 cameraRotate{ 0.39f,0.0f,0.0f };
 
-	AABB aabb1
-	{
-		.min{-0.5f,-0.5f,-0.5f},
-		.max{0.0f,0.0f,0.0f},
+	Vector3 rotate{ 0.0f,0.0f,0.0f };
+	OBB obb{
+		.center{-1.0f,0.0f,0.0f},
+		.orientations = {{1.0f,0.0f,0.0f},
+						 {0.0f,1.0f,0.0f},
+						 {0.0f,0.0f,1.0f}},
+		.size{ 0.5f,0.5f,0.5f }
 	};
-	uint32_t aabb1Color = 0xffffffff;
 
-	Segment segment
-	{
-		.origin{-0.7f,0.3f,0.0f},
-		.diff{2.0f,-0.5f,0.0f},
+	Sphere sphere{
+		.center{0.0f,0.0f,0.0f},
+		.rotate{0.0f,0.0f,0.0f},
+		.radius{0.5f},
+		.color = WHITE,
 	};
 
 	// ウィンドウの×ボタンが押されるまでループ
@@ -45,17 +48,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		ImGui::Begin("Window");
 		ImGui::DragFloat3("cameraTranslate", &cameraTranslate.x, 0.01f);
 		ImGui::DragFloat3("cameraRotate", &cameraRotate.x, 0.01f);
-		ImGui::DragFloat3("AABB1 min", &aabb1.min.x, 0.01f);
-		ImGui::DragFloat3("AABB1 max", &aabb1.max.x, 0.01f);
-		ImGui::DragFloat3("segment origin", &segment.origin.x, 0.01f);
-		ImGui::DragFloat3("segment diff", &segment.diff.x, 0.01f);
 
-		aabb1.min.x = (std::min)(aabb1.min.x, aabb1.max.x);
-		aabb1.max.x = (std::max)(aabb1.min.x, aabb1.max.x);
-		aabb1.min.y = (std::min)(aabb1.min.y, aabb1.max.y);
-		aabb1.max.y = (std::max)(aabb1.min.y, aabb1.max.y);
-		aabb1.min.z = (std::min)(aabb1.min.z, aabb1.max.z);
-		aabb1.max.z = (std::max)(aabb1.min.z, aabb1.max.z);
+		ImGui::DragFloat3("obbTranslate", &obb.center.x, 0.01f);
+		ImGui::DragFloat3("obbSize", &obb.size.x, 0.01f);
+		ImGui::DragFloat3("obbRotate", &rotate.x,0.01f);
 
 
 		ImGui::End();
@@ -69,13 +65,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kScreenWidth), float(kScreenHeight), 0.0f, 1.0f);
 		Matrix4x4 viewProjectionMatrix = Multiply(viewMatrix, projectionMatrix);
 
-		if (IsCollision(aabb1, segment))
+		Matrix4x4 rotateMatrix = MakeRotateXYZMatrix(rotate);
+
+		obb.orientations[0].x = rotateMatrix.m[0][0];
+		obb.orientations[0].y = rotateMatrix.m[0][1];
+		obb.orientations[0].z = rotateMatrix.m[0][2];
+
+		obb.orientations[1].x = rotateMatrix.m[1][0];
+		obb.orientations[1].y = rotateMatrix.m[1][1];
+		obb.orientations[1].z = rotateMatrix.m[1][2];
+
+		obb.orientations[2].x = rotateMatrix.m[2][0];
+		obb.orientations[2].y = rotateMatrix.m[2][1];
+		obb.orientations[2].z = rotateMatrix.m[2][2];
+
+
+		if (IsCollision(obb, sphere))
 		{
-			aabb1Color = RED;
+			sphere.color = RED;
 		}
 		else
 		{
-			aabb1Color = WHITE;
+			sphere.color = WHITE;
 		}
 
 		///
@@ -87,9 +98,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		///
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
 
-		DrawAABB(aabb1, viewProjectionMatrix, viewportMatrix, aabb1Color);
-		DrawLine(segment, viewProjectionMatrix, viewportMatrix, WHITE);
+		DrawOBB(obb, viewProjectionMatrix, viewportMatrix, WHITE);
 
+		DrawSphere(sphere, viewProjectionMatrix, viewportMatrix);
 		///
 		/// ↑描画処理ここまで
 		///

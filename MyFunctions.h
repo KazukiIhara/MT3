@@ -79,6 +79,13 @@ struct AABB
 	Vector3 max;
 };
 
+struct OBB
+{
+	Vector3 center;
+	Vector3 orientations[3];
+	Vector3 size;
+};
+
 /*---関数---*/
 
 int Add(const int& a, const int& b);
@@ -144,6 +151,8 @@ void DrawTriangle(const Triangle& triangle, const Matrix4x4& viewProjectionMatri
 
 void DrawAABB(const AABB& aabb, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
 
+void DrawOBB(const OBB& obb, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
+
 Vector3 Project(const Vector3& v1, const Vector3& v2);
 Vector3 ClosestPoint(const Vector3& point, const Segment& segment);
 
@@ -156,5 +165,6 @@ bool IsCollision(const Triangle& triangle, const Segment& line);
 bool IsCollision(const AABB& aabb1, const AABB& aabb2);
 bool IsCollision(const AABB& aabb, const Sphere& sphere);
 bool IsCollision(const AABB& aabb, const Segment& segment);
+bool IsCollision(const OBB& obb, const Sphere& sphere);
 
 Plane CreatePlaneFromTriangle(const Triangle& triangle);
