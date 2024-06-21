@@ -17,6 +17,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	Vector3 cameraTranslate{ 0.00f,1.90f,-5.0f };
 	Vector3 cameraRotate{ 0.39f,0.0f,0.0f };
 
+	Vector3 controlPoint[3] = {
+		{-0.8f,0.58f,1.0f},
+		{1.76f,1.0f,-0.3f},
+		{0.94f,-0.7f,2.3f},
+	};
+
+	Sphere controlSphere[3] = {};
+
+	for (uint32_t i = 0; i < 3; i++)
+	{
+		controlSphere[i].center = controlPoint[i];
+		controlSphere[i].color = BLACK;
+		controlSphere[i].radius = 0.01f;
+		controlSphere[i].rotate = { 0.0f,0.0f,0.0f };
+	}
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0)
@@ -33,7 +48,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		ImGui::Begin("Window");
 		ImGui::DragFloat3("cameraTranslate", &cameraTranslate.x, 0.01f);
 		ImGui::DragFloat3("cameraRotate", &cameraRotate.x, 0.01f);
-
+		ImGui::DragFloat3("controlPoint0", &controlSphere[0].center.x, 0.01f);
+		ImGui::DragFloat3("controlPoint1", &controlSphere[1].center.x, 0.01f);
+		ImGui::DragFloat3("controlPoint2", &controlSphere[2].center.x, 0.01f);
 
 		ImGui::End();
 
@@ -53,7 +70,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		///
 		/// ↓描画処理ここから
 		///
+
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
+		DrawBezier(controlSphere[0].center, controlSphere[1].center, controlSphere[2].center, viewProjectionMatrix, viewportMatrix, RED);
+		for (uint32_t i = 0; i < 3; i++)
+		{
+			DrawSphere(controlSphere[i], viewProjectionMatrix, viewportMatrix);
+		}
 
 		///
 		/// ↑描画処理ここまで
