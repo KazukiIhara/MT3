@@ -17,27 +17,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	Vector3 cameraTranslate{ 0.00f,1.90f,-5.0f };
 	Vector3 cameraRotate{ 0.39f,0.0f,0.0f };
 
-	Vector3 translates[3] = {
-		{0.2f,1.0f,0.0f},
-		{0.4f,0.0f,0.0f},
-		{0.3f,0.0f,0.0f},
-	};
-	Vector3 rotates[3] = {
-		{0.0f,0.0f,-6.8f},
-		{0.0f,0.0f,-1.4f},
-		{0.0f,0.0f,0.0f},
-	};
-	Vector3 scales[3] = {
-		{1.0f,1.0f,1.0f},
-		{1.0f,1.0f,1.0f},
-		{1.0f,1.0f,1.0f},
-	};
-
-	uint32_t color[3]{};
-	color[0] = RED;
-	color[1] = GREEN;
-	color[2] = BLUE;
-
+	Vector3 a = { 0.2f,1.0f,0.0f };
+	Vector3 b = { 2.4f,3.1f,1.2f };
+	Vector3 c = a + b;
+	Vector3 d = a - b;
+	Vector3 e = a * 2.4f;
+	Vector3 rotate = { 0.4f,1.43f,-0.8f };
+	Matrix4x4 rotateXMatrix = MakeRotateXMatrix(rotate.x);
+	Matrix4x4 rotateYMatrix = MakeRotateYMatrix(rotate.y);
+	Matrix4x4 rotateZMatrix = MakeRotateZMatrix(rotate.z);
+	Matrix4x4 rotateMatrix = rotateXMatrix * rotateYMatrix * rotateZMatrix;
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0)
@@ -52,21 +41,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		//Imgui
 		ImGui::Begin("Window");
-		ImGui::DragFloat3("cameraTranslate", &cameraTranslate.x, 0.01f);
-		ImGui::DragFloat3("cameraRotate", &cameraRotate.x, 0.01f);
-
-		ImGui::DragFloat3("Scale0", &scales[0].x, 0.01f);
-		ImGui::DragFloat3("Rotate0", &rotates[0].x, 0.01f);
-		ImGui::DragFloat3("Translate0", &translates[0].x, 0.01f);
-
-		ImGui::DragFloat3("Scale1", &scales[1].x, 0.01f);
-		ImGui::DragFloat3("Rotate1", &rotates[1].x, 0.01f);
-		ImGui::DragFloat3("Translate1", &translates[1].x, 0.01f);
-
-		ImGui::DragFloat3("Scale2", &scales[2].x, 0.01f);
-		ImGui::DragFloat3("Rotate2", &rotates[2].x, 0.01f);
-		ImGui::DragFloat3("Translate2", &translates[2].x, 0.01f);
-
+		ImGui::Text("c:%f, %f, %f", c.x, c.y, c.z);
+		ImGui::Text("d:%f, %f, %f", d.x, d.y, d.z);
+		ImGui::Text("e:%f, %f, %f", e.x, e.y, e.z);
+		ImGui::Text(
+			"matrix:\n%f, %f, %f, %f\n%f, %f, %f, %f\n%f, %f, %f, %f\n%f, %f, %f, %f\n",
+			rotateMatrix.m[0][0], rotateMatrix.m[0][1], rotateMatrix.m[0][2], rotateMatrix.m[0][3],
+			rotateMatrix.m[1][0], rotateMatrix.m[1][1], rotateMatrix.m[1][2], rotateMatrix.m[1][3],
+			rotateMatrix.m[2][0], rotateMatrix.m[2][1], rotateMatrix.m[2][2], rotateMatrix.m[2][3],
+			rotateMatrix.m[3][0], rotateMatrix.m[3][1], rotateMatrix.m[3][2], rotateMatrix.m[3][3]
+		);
 
 		ImGui::End();
 
@@ -79,16 +63,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kScreenWidth), float(kScreenHeight), 0.0f, 1.0f);
 		Matrix4x4 viewProjectionMatrix = Multiply(viewMatrix, projectionMatrix);
 
-		Matrix4x4 worldMatrix[3]{};
-		Matrix4x4 localMatrix[3]{};
-		for (uint32_t i = 0; i < 3; i++)
-		{
-			localMatrix[i] = MakeAffineMatrix(scales[i], rotates[i], translates[i]);
-		}
-		worldMatrix[0] = localMatrix[0];
-		worldMatrix[1] = Multiply(MakeAffineMatrix(scales[1], rotates[1], translates[1]), localMatrix[0]);
-		worldMatrix[2] = Multiply(Multiply(MakeAffineMatrix(scales[2], rotates[2], translates[2]), localMatrix[1]), localMatrix[0]);
-
 		///
 		/// ↑更新処理ここまで
 		///
@@ -99,22 +73,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
 
-		// 各球体をつなぐ線を引くための点を求める処理
-		Vector3 screenPos[3]{};
-		for (uint32_t i = 0; i < 3; i++)
-		{
-			Matrix4x4 wvpMatix = Multiply(worldMatrix[i], viewProjectionMatrix);
-			Vector3	ndc = Transform(Vector3(0, 0, 0), wvpMatix);
-			screenPos[i] = Transform(ndc, viewportMatrix);
-		}
-
-		Novice::DrawLine(int(screenPos[0].x), int(screenPos[0].y), int(screenPos[1].x), int(screenPos[1].y), WHITE);
-		Novice::DrawLine(int(screenPos[1].x), int(screenPos[1].y), int(screenPos[2].x), int(screenPos[2].y), WHITE);
-
-		for (uint32_t i = 0; i < 3; ++i)
-		{
-			DrawSphereWorldMatrix(worldMatrix[i], viewProjectionMatrix, viewportMatrix, color[i]);
-		}
 
 		///
 		/// ↑描画処理ここまで
