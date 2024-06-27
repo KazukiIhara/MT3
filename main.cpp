@@ -34,6 +34,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	float deltaTime = 1.0f / 60.0f;
 
+	bool isUpdate = false;
+
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
 		// フレームの開始
@@ -46,7 +48,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//Imgui
 		ImGui::Begin("Window");
-
+		if (ImGui::Button("Start")) {
+			isUpdate = true;
+		}
 		ImGui::End();
 
 		///
@@ -62,7 +66,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Vector3 diff = ball.position - spring.anchor;
 
 		float length = Length(diff);
-		if (length != 0.0f) {
+		if (isUpdate && length != 0.0f) {
 			Vector3 direction = Normalize(diff);
 			Vector3 restPosition = spring.anchor + direction * spring.naturalLength;
 			Vector3 displacement = length * (ball.position - restPosition);
