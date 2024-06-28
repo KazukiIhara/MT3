@@ -16,21 +16,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector3 cameraTranslate{ 0.00f,1.90f,-5.0f };
 	Vector3 cameraRotate{ 0.39f,0.0f,0.0f };
 
-	Spring spring{};
-	spring.anchor = { 0.0f,0.0f,0.0f };
-	spring.naturalLength = 1.0f;
-	spring.stiffness = 100.0f;
-	spring.dampingCoefficient = 2.0f;
-
 	Ball ball{};
 	ball.position = { 1.2f,0.0f,0.0f };
 	ball.mass = 2.0f;
 	ball.radius = 0.05f;
 	ball.color = BLUE;
 
-	Segment segment{};
-	segment.origin = spring.anchor;
+	Vector3 point{};
 
+	Vector3 center{};
+
+	float radius = 0.8f;
+
+	float angleVelocity = 3.14f;
+
+	float angle = 0.0f;
 
 	float deltaTime = 1.0f / 60.0f;
 
@@ -63,24 +63,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 viewProjectionMatrix = Multiply(viewMatrix, projectionMatrix);
 
 
-		Vector3 diff = ball.position - spring.anchor;
-
-		float length = Length(diff);
-		if (isUpdate && length != 0.0f) {
-			Vector3 direction = Normalize(diff);
-			Vector3 restPosition = spring.anchor + direction * spring.naturalLength;
-			Vector3 displacement = length * (ball.position - restPosition);
-			Vector3 restoringForce = -spring.stiffness * displacement;
-			Vector3 dampingForce = -spring.dampingCoefficient * ball.velocity;
-			Vector3 force = restoringForce + dampingForce;
-			ball.acceleration = force / ball.mass;
+		if (isUpdate) {
+			angle += angleVelocity * deltaTime;
 		}
 
-		ball.velocity += ball.acceleration * deltaTime;
-		ball.position += ball.velocity * deltaTime;
+		point.x = center.x + std::cos(angle) * radius;
+		point.y = center.y + std::sin(angle) * radius;
+		point.z = center.z;
 
-		Matrix4x4 ballWorldMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, ball.position);
-		segment.diff = ball.position;
+		Matrix4x4 worldMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, point);
+
 		///
 		/// ↑更新処理ここまで
 		///
@@ -90,9 +82,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
-		DrawSphereWorldMatrix(ballWorldMatrix, viewProjectionMatrix, viewportMatrix, ball.color);
-		DrawLine(segment, viewProjectionMatrix, viewportMatrix, WHITE);
-
+		DrawSphereWorldMatrix(worldMatrix, viewProjectionMatrix, viewportMatrix, BLUE);
 		///
 		/// ↑描画処理ここまで
 		///
