@@ -22,16 +22,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ball.radius = 0.05f;
 	ball.color = BLUE;
 
-	Vector3 point{};
-
-	Vector3 center{};
-
-	float radius = 0.8f;
-
-	float angleVelocity = 3.14f;
-
-	float angle = 0.0f;
-
 	float deltaTime = 1.0f / 60.0f;
 
 	bool isUpdate = false;
@@ -63,16 +53,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 viewProjectionMatrix = Multiply(viewMatrix, projectionMatrix);
 
 
-		if (isUpdate) {
-			angle += angleVelocity * deltaTime;
-		}
-
-		point.x = center.x + std::cos(angle) * radius;
-		point.y = center.y + std::sin(angle) * radius;
-		point.z = center.z;
-
-		Matrix4x4 worldMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, point);
-
 		///
 		/// ↑更新処理ここまで
 		///
@@ -82,7 +62,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
-		DrawSphereWorldMatrix(worldMatrix, viewProjectionMatrix, viewportMatrix, BLUE);
+
 		///
 		/// ↑描画処理ここまで
 		///
