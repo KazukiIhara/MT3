@@ -102,6 +102,14 @@ struct Ball {
 	unsigned int color; // ボールの色
 };
 
+struct Pendulum {
+	Vector3 anchor; // アンカーポイント
+	float length; // 弦の長さ
+	float angle; // 現在の角度
+	float angulerVelocity; // 角速度
+	float angulerAcceleration; // 角加速度
+};
+
 /*---関数---*/
 
 int Add(const int& a, const int& b);
