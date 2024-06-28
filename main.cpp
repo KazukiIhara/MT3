@@ -16,11 +16,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector3 cameraTranslate{ 0.00f,1.90f,-5.0f };
 	Vector3 cameraRotate{ 0.39f,0.0f,0.0f };
 
-	Ball ball{};
-	ball.position = { 1.2f,0.0f,0.0f };
-	ball.mass = 2.0f;
-	ball.radius = 0.05f;
-	ball.color = BLUE;
+	Vector3 position{};
+
+	Pendulum pendulum;
+	pendulum.anchor = { 0.0f,1.0f,0.0f };
+	pendulum.length = 0.8f;
+	pendulum.angle = 0.7f;
+	pendulum.angulerVelocity = 0.0f;
+	pendulum.angulerAcceleration = 0.0f;
+
+	Segment segment{};
 
 	float deltaTime = 1.0f / 60.0f;
 
@@ -52,6 +57,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kScreenWidth), float(kScreenHeight), 0.0f, 1.0f);
 		Matrix4x4 viewProjectionMatrix = Multiply(viewMatrix, projectionMatrix);
 
+		if (isUpdate) {
+			pendulum.angulerAcceleration = -(9.8f / pendulum.length) * std::sin(pendulum.angle);
+			pendulum.angulerVelocity += pendulum.angulerAcceleration * deltaTime;
+			pendulum.angle += pendulum.angulerVelocity * deltaTime;
+		}
+
+		position.x = pendulum.anchor.x + std::sin(pendulum.angle) * pendulum.length;
+		position.y = pendulum.anchor.y - std::cos(pendulum.angle) * pendulum.length;
+		position.z = pendulum.anchor.z;
+
+		Matrix4x4 worldMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, position);
+
+		segment.origin = pendulum.anchor;
+		segment.diff = position - pendulum.anchor;
 
 		///
 		/// ↑更新処理ここまで
@@ -62,6 +81,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
+		DrawLine(segment, viewProjectionMatrix, viewportMatrix, WHITE);
+		DrawSphereWorldMatrix(worldMatrix, viewProjectionMatrix, viewportMatrix, BLUE);
 
 		///
 		/// ↑描画処理ここまで
