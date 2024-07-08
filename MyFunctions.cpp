@@ -829,6 +829,12 @@ void DrawBezier(const Vector3& controlPoint0, const Vector3& controlPoint1, cons
 	}
 }
 
+Vector3 Reflect(const Vector3& input, const Vector3& normal) {
+	Vector3 normalizedNormal = normal * (1.0f / sqrtf(Dot(normal, normal))); // 正規化された法線ベクトル
+	float dotProduct = Dot(input, normalizedNormal);
+	return input - normalizedNormal * (2.0f * dotProduct);
+}
+
 Vector3 operator+(const Vector3& v1, const Vector3& v2) {
 	return Add(v1, v2);
 }
