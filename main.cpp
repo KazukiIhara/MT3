@@ -18,12 +18,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Vector3 position{};
 
-	Pendulum pendulum;
+	ConicalPendulum pendulum;
 	pendulum.anchor = { 0.0f,1.0f,0.0f };
 	pendulum.length = 0.8f;
-	pendulum.angle = 0.7f;
-	pendulum.angulerVelocity = 0.0f;
-	pendulum.angulerAcceleration = 0.0f;
+	pendulum.halfApexAngle = 0.7f;
+	pendulum.angle = 0.0f;
+	pendulum.angularVelocity = 0.0f;
 
 	Segment segment{};
 
@@ -43,6 +43,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//Imgui
 		ImGui::Begin("Window");
+		ImGui::DragFloat3("cameraTranslate", &cameraTranslate.x, 0.01f);
+		ImGui::DragFloat3("cameraRotate", &cameraRotate.x, 0.01f);
+
 		if (ImGui::Button("Start")) {
 			isUpdate = true;
 		}
@@ -58,14 +61,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 viewProjectionMatrix = Multiply(viewMatrix, projectionMatrix);
 
 		if (isUpdate) {
-			pendulum.angulerAcceleration = -(9.8f / pendulum.length) * std::sin(pendulum.angle);
-			pendulum.angulerVelocity += pendulum.angulerAcceleration * deltaTime;
-			pendulum.angle += pendulum.angulerVelocity * deltaTime;
+			pendulum.angularVelocity = std::sqrt(9.8f / (pendulum.length * std::cos(pendulum.halfApexAngle)));
+			pendulum.angle += pendulum.angularVelocity * deltaTime;
 		}
 
-		position.x = pendulum.anchor.x + std::sin(pendulum.angle) * pendulum.length;
-		position.y = pendulum.anchor.y - std::cos(pendulum.angle) * pendulum.length;
-		position.z = pendulum.anchor.z;
+		float radius = std::sin(pendulum.halfApexAngle) * pendulum.length;
+		float height = std::cos(pendulum.halfApexAngle) * pendulum.length;
+
+		position.x = pendulum.anchor.x + std::cos(pendulum.angle) * radius;
+		position.y = pendulum.anchor.y - height;
+		position.z = pendulum.anchor.z - std::sin(pendulum.angle) * radius;
 
 		Matrix4x4 worldMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, position);
 

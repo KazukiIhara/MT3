@@ -110,6 +110,14 @@ struct Pendulum {
 	float angulerAcceleration; // 角加速度
 };
 
+struct ConicalPendulum 	{
+	Vector3 anchor;
+	float length;
+	float halfApexAngle;
+	float angle;
+	float angularVelocity;
+};
+
 /*---関数---*/
 
 int Add(const int& a, const int& b);
