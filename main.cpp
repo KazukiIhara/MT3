@@ -43,10 +43,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//Imgui
 		ImGui::Begin("Window");
-
-
-
-
+		ImGui::DragFloat3("cameraTranslate", &cameraTranslate.x, 0.01f);
+		ImGui::DragFloat3("cameraRotate", &cameraRotate.x, 0.01f);
 
 		if (ImGui::Button("Start")) {
 			isUpdate = true;
