@@ -22,7 +22,6 @@ int Divide(const int& a, const int& b) {
 	return a / b;
 }
 
-
 float Add(const float& a, const float& b) {
 	return a + b;
 }
