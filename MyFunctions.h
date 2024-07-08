@@ -15,72 +15,60 @@ static const int kRowHeight = 24;
 static const int kColumnWidth = 60;//Vector3を画面に描画する時に使う定数
 
 /*---構造体---*/
-struct Transform
-{
+struct Transform {
 	int x;
 	int y;
 };
 
-struct Matrix2x2
-{
+struct Matrix2x2 {
 	float m[2][2];
 };
 
-struct Matrix3x3
-{
+struct Matrix3x3 {
 	float m[3][3];
 };
 
-struct Matrix4x4
-{
+struct Matrix4x4 {
 	float m[4][4];
 };
 
-struct Sphere
-{
+struct Sphere {
 	Vector3 center;//中心点
 	Vector3 rotate;//回転
 	float radius;//半径
 	uint32_t color;//色
 };
 
-struct Triangle
-{
+struct Triangle {
 	Vector3 vertices[3];
 };
 
-struct Line
-{
+struct Line {
 	Vector3 origin;	//始点
 	Vector3 diff;	//終点への差分ベクトル
 };
 
-struct Ray
-{
+struct Ray {
 	Vector3 origin;	//始点
 	Vector3 diff;	//終点への差分ベクトル
 };
 
-struct Segment
-{
+struct Segment {
 	Vector3 origin;	//始点
 	Vector3 diff;	//終点への差分ベクトル
 };
 
-struct Plane
-{
+struct Plane {
 	Vector3 normal;
 	float distance;
 };
 
-struct AABB
-{
+struct AABB {
 	Vector3 min;
 	Vector3 max;
 };
 
-struct OBB
-{
+struct OBB {
 	Vector3 center;
 	Vector3 orientations[3];
 	Vector3 size;
@@ -110,7 +98,7 @@ struct Pendulum {
 	float angulerAcceleration; // 角加速度
 };
 
-struct ConicalPendulum 	{
+struct ConicalPendulum {
 	Vector3 anchor;
 	float length;
 	float halfApexAngle;
@@ -207,6 +195,8 @@ Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
 
 void DrawBezier(const Vector3& controlPoint0, const Vector3& consrolPoint1, const Vector3& controlPoint2,
 	const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewPortMatrix, uint32_t color);
+
+Vector3 Reflect(const Vector3& input, const Vector3& normal);
 
 // operator oveloading
 
