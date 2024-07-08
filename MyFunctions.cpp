@@ -633,14 +633,13 @@ bool IsCollision(const Sphere& s1, const Sphere& s2) {
 }
 
 bool IsCollision(const Sphere& sphere, const Plane& plane) {
-    // 2つの円と平面の中心間の距離を計算
-    float distance = std::abs((Dot(plane.normal, sphere.center)) - plane.distance);
-    // 中心間の距離が2つの円の半径の合計よりも小さい場合、衝突しているとみなす
-    if (distance <= sphere.radius) {
-        return true;
-    } else {
-        return false;
-    }
+	float distance = fabs(Dot(sphere.center, plane.normal) - plane.distance);
+
+	if (distance < sphere.radius) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 bool IsCollision(const Segment& line, const Plane& plane) {
