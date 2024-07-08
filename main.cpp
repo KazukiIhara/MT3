@@ -21,18 +21,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	bool isUpdate = false;
 
 	Plane plane{};
-	plane.normal = Normalize({ -0.2f,0.9f,-0.3f });
+	plane.normal = Normalize(Vector3(-0.2f, 0.9f, -0.3f));
 	plane.distance = 0.0f;
 
 	Ball ball{};
 	ball.position = { 0.8f,1.2f,0.3f };
 	ball.mass = 2.0f;
 	ball.radius = 0.05f;
-	ball.acceleration = { 0.0f,-9.8f,0.0f };
+	ball.acceleration = { 0.0f,-1.8f,0.0f };
 	ball.velocity = { 0.0f,0.0f,0.0f };
 	ball.color = WHITE;
 
-	float e = 0.0f;
+	float e = 1.0f;
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -62,18 +62,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(kScreenWidth) / float(kScreenHeight), 0.1f, 100.0f);
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kScreenWidth), float(kScreenHeight), 0.0f, 1.0f);
 		Matrix4x4 viewProjectionMatrix = Multiply(viewMatrix, projectionMatrix);
-
 		if (isUpdate) {
 			ball.velocity += ball.acceleration * deltaTime;
 			ball.position += ball.velocity * deltaTime;
 		}
-		if (IsCollision(Sphere{ ball.position,ball.radius }, plane)) {
+		Sphere sphere = { ball.position,ball.radius };
+		if (IsCollision(sphere, plane)) {
 			Vector3 reflected = Reflect(ball.velocity, plane.normal);
 			Vector3 projectToNormal = Project(reflected, plane.normal);
 			Vector3 movingDirection = reflected - projectToNormal;
 			ball.velocity = projectToNormal * e + movingDirection;
 		}
 
+		Matrix4x4 worldMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, ball.position);
 
 
 		///
@@ -86,7 +87,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
 		DrawPlane(plane, viewProjectionMatrix, viewportMatrix, WHITE);
-		DrawSphere(Sphere{ ball.position,ball.radius }, viewProjectionMatrix, viewportMatrix);
+		DrawSphereWorldMatrix(worldMatrix, viewProjectionMatrix, viewportMatrix, WHITE);
 
 		///
 		/// ↑描画処理ここまで

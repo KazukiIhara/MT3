@@ -633,13 +633,14 @@ bool IsCollision(const Sphere& s1, const Sphere& s2) {
 }
 
 bool IsCollision(const Sphere& sphere, const Plane& plane) {
-	float distance = fabs(Dot(sphere.center, plane.normal) - plane.distance);
-
-	if (distance < sphere.radius) {
-		return true;
-	} else {
-		return false;
-	}
+    // 2つの円と平面の中心間の距離を計算
+    float distance = std::abs((Dot(plane.normal, sphere.center)) - plane.distance);
+    // 中心間の距離が2つの円の半径の合計よりも小さい場合、衝突しているとみなす
+    if (distance <= sphere.radius) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 bool IsCollision(const Segment& line, const Plane& plane) {
@@ -830,7 +831,9 @@ void DrawBezier(const Vector3& controlPoint0, const Vector3& controlPoint1, cons
 }
 
 Vector3 Reflect(const Vector3& input, const Vector3& normal) {
-	return input - normal * 2.0f * Dot(input, normal);
+	Vector3 normalizedNormal = normal * (1.0f / sqrtf(Dot(normal, normal))); // 正規化された法線ベクトル
+	float dotProduct = Dot(input, normalizedNormal);
+	return input - normalizedNormal * (2.0f * dotProduct);
 }
 
 Vector3 operator+(const Vector3& v1, const Vector3& v2) {
