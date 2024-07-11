@@ -5,8 +5,7 @@
 const char kWindowTitle[] = "LE2B_02_イハラ_カズキ_MT3_02_02";
 
 // Windowsアプリでのエントリーポイント(main関数)
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
-{
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ライブラリの初期化
 	Novice::Initialize(kWindowTitle, kScreenWidth, kScreenHeight);
 	WindowMode windowMode = kWindowed;
@@ -17,16 +16,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	Vector3 cameraTranslate{ 0.00f,1.90f,-5.0f };
 	Vector3 cameraRotate{ 0.39f,0.0f,0.0f };
 
-	Vector3 controlPoint[3] = {
+	Vector3 controlPoint[4] = {
 		{-0.8f,0.58f,1.0f},
 		{1.76f,1.0f,-0.3f},
 		{0.94f,-0.7f,2.3f},
+		{-0.53f,-0.26f,-0.15f},
 	};
 
-	Sphere controlSphere[3] = {};
+	Sphere controlSphere[4] = {};
 
-	for (uint32_t i = 0; i < 3; i++)
-	{
+	for (uint32_t i = 0; i < 4; i++) {
 		controlSphere[i].center = controlPoint[i];
 		controlSphere[i].color = BLACK;
 		controlSphere[i].radius = 0.01f;
@@ -34,8 +33,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	}
 
 	// ウィンドウの×ボタンが押されるまでループ
-	while (Novice::ProcessMessage() == 0)
-	{
+	while (Novice::ProcessMessage() == 0) {
 		// フレームの開始
 		Novice::BeginFrame();
 		// キー入力を受け取る
@@ -72,9 +70,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		///
 
 		DrawGrid(viewProjectionMatrix, viewportMatrix);
-		DrawBezier(controlSphere[0].center, controlSphere[1].center, controlSphere[2].center, viewProjectionMatrix, viewportMatrix, RED);
-		for (uint32_t i = 0; i < 3; i++)
-		{
+		DrawCatmullRom(controlSphere[0].center, controlSphere[1].center, controlSphere[2].center, controlSphere[3].center, viewProjectionMatrix, viewportMatrix, BLACK);
+		for (uint32_t i = 0; i < 4; i++) {
 			DrawSphere(controlSphere[i], viewProjectionMatrix, viewportMatrix);
 		}
 
@@ -86,8 +83,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		Novice::EndFrame();
 
 		// ESCキーが押されたらループを抜ける
-		if (preKeys[DIK_ESCAPE] == 0 && keys[DIK_ESCAPE] != 0)
-		{
+		if (preKeys[DIK_ESCAPE] == 0 && keys[DIK_ESCAPE] != 0) {
 			break;
 		}
 	}

@@ -15,72 +15,60 @@ static const int kRowHeight = 24;
 static const int kColumnWidth = 60;//Vector3を画面に描画する時に使う定数
 
 /*---構造体---*/
-struct Transform
-{
+struct Transform {
 	int x;
 	int y;
 };
 
-struct Matrix2x2
-{
+struct Matrix2x2 {
 	float m[2][2];
 };
 
-struct Matrix3x3
-{
+struct Matrix3x3 {
 	float m[3][3];
 };
 
-struct Matrix4x4
-{
+struct Matrix4x4 {
 	float m[4][4];
 };
 
-struct Sphere
-{
+struct Sphere {
 	Vector3 center;//中心点
 	Vector3 rotate;//回転
 	float radius;//半径
 	uint32_t color;//色
 };
 
-struct Triangle
-{
+struct Triangle {
 	Vector3 vertices[3];
 };
 
-struct Line
-{
+struct Line {
 	Vector3 origin;	//始点
 	Vector3 diff;	//終点への差分ベクトル
 };
 
-struct Ray
-{
+struct Ray {
 	Vector3 origin;	//始点
 	Vector3 diff;	//終点への差分ベクトル
 };
 
-struct Segment
-{
+struct Segment {
 	Vector3 origin;	//始点
 	Vector3 diff;	//終点への差分ベクトル
 };
 
-struct Plane
-{
+struct Plane {
 	Vector3 normal;
 	float distance;
 };
 
-struct AABB
-{
+struct AABB {
 	Vector3 min;
 	Vector3 max;
 };
 
-struct OBB
-{
+struct OBB {
 	Vector3 center;
 	Vector3 orientations[3];
 	Vector3 size;
@@ -173,3 +161,85 @@ Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
 
 void DrawBezier(const Vector3& controlPoint0, const Vector3& consrolPoint1, const Vector3& controlPoint2,
 	const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewPortMatrix, uint32_t color);
+Vector3 CatmullRomSpline(float t, const Vector3& p0, const Vector3& p1, const Vector3& p2, const Vector3& p3);
+void DrawCatmullRom(const Vector3& controlPoint0, const Vector3& consrolPoint1, const Vector3& controlPoint2, const Vector3& controlPoint3, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewPortMatrix, uint32_t color);
+
+
+
+
+
+
+/// 
+/// Vector2
+/// 
+
+Vector2 operator-(const Vector2& v);
+
+Vector2 operator+(const Vector2& v);
+
+///
+/// Vector2 & Vector2
+/// 
+
+Vector2 operator+(const Vector2& v1, const Vector2& v2);
+
+Vector2 operator-(const Vector2& v1, const Vector2& v2);
+
+Vector2 operator*(const Vector2& v1, const Vector2& v2);
+
+Vector2 operator/(const Vector2& v1, const Vector2& v2);
+
+/// 
+/// Vector2 & Scaler 
+///
+
+Vector2 operator/(const Vector2& v, float s);
+
+Vector2 operator*(float s, const Vector2& v);
+
+Vector2 operator*(const Vector2& v, float s);
+
+
+///
+/// Vector3
+/// 
+
+Vector3 operator-(const Vector3& v);
+
+Vector3 operator+(const Vector3& v);
+
+/// 
+/// Vector3 & Vector3 
+///
+
+Vector3 operator+(const Vector3& v1, const Vector3& v2);
+
+Vector3 operator-(const Vector3& v1, const Vector3& v2);
+
+Vector3 operator*(const Vector3& v1, const Vector3& v2);
+
+Vector3 operator/(const Vector3& v1, const Vector3& v2);
+
+/// 
+/// Vector3 & Scaler
+/// 
+
+Vector3 operator*(float s, const Vector3& v);
+
+Vector3 operator*(const Vector3& v, float s);
+
+Vector3 operator/(const Vector3& v, float s);
+
+///
+/// Matrix4x4
+/// 
+
+/// 
+/// Matrix4x4 & Matrix4x4
+/// 
+
+Matrix4x4 operator+(const Matrix4x4& m1, const Matrix4x4& m2);
+
+Matrix4x4 operator-(const Matrix4x4& m1, const Matrix4x4& m2);
+
+Matrix4x4 operator*(const Matrix4x4& m1, const Matrix4x4& m2);
