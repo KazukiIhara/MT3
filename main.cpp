@@ -17,13 +17,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector3 cameraRotate{ 0.39f,0.0f,0.0f };
 
 	Spring spring{};
-	spring.anchor = { 0.0f,0.0f,0.0f };
-	spring.naturalLength = 1.0f;
+	spring.anchor = { 0.0f,1.0f,0.0f };
+	spring.naturalLength = 0.7f;
 	spring.stiffness = 100.0f;
 	spring.dampingCoefficient = 2.0f;
 
 	Ball ball{};
-	ball.position = { 1.2f,0.0f,0.0f };
+	ball.position = { 0.8f,0.2f,0.0f };
 	ball.mass = 2.0f;
 	ball.radius = 0.05f;
 	ball.color = BLUE;
@@ -31,6 +31,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Segment segment{};
 	segment.origin = spring.anchor;
 
+	const Vector3 kGravity{ 0.0f,-9.8f,0.0f };
 
 	float deltaTime = 1.0f / 60.0f;
 
@@ -72,7 +73,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Vector3 displacement = length * (ball.position - restPosition);
 			Vector3 restoringForce = -spring.stiffness * displacement;
 			Vector3 dampingForce = -spring.dampingCoefficient * ball.velocity;
-			Vector3 force = restoringForce + dampingForce;
+			Vector3 force = restoringForce + dampingForce + kGravity;
 			ball.acceleration = force / ball.mass;
 		}
 
@@ -80,7 +81,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ball.position += ball.velocity * deltaTime;
 
 		Matrix4x4 ballWorldMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, ball.position);
-		segment.diff = ball.position;
+		segment.diff = ball.position - segment.origin;
 		///
 		/// ↑更新処理ここまで
 		///
